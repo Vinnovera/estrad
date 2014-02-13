@@ -1,0 +1,11 @@
+{
+	"undef": true,
+	"unused": true,
+	"devel": true,
+	"node": true,
+	"latedef": "nofunc",
+	"newcap": true,
+	"noempty": true,
+	"strict": true,
+	"onevar": true
+}

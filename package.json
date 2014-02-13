@@ -1,0 +1,25 @@
+{
+  "name": "estrad",
+  "title": "Estrad",
+  "version": "0.0.1",
+  "description": "A tool to create modular static frontend templates with a mocked backend",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "~3.5.0",
+    "gulp-concat": "~2.1.7",
+    "gulp-jshint": "~1.3.4",
+    "jshint-stylish": "~0.1.5",
+    "chokidar": "~0.8.1",
+    "chalk": "~0.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Per Stenström",
+  "license": "BSD-2-Clause"
+}
