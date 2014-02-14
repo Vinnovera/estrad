@@ -21,24 +21,24 @@ To build your project and to start a node server to view it you can simply type:
 First you need a page, see `index.html` as an example. It looks like this:
 
 	{{=part.header}}
-	{{=part.body}}
+	{{=part.example}}
 	{{=part.footer}}
 
-If you open it in the browser right now that's what it will look like too. `header`, `body` and `footer` are names of modules that the 
-server will look for and interpolate in its place. All modules needs to be placed under a `/modules/` subdirecotry.
+If you open it in the browser right now that's what it will look like too. `header`, `example` and `footer` are names of modules that the server will look for and interpolate in its place. All modules needs to be placed under a `/modules/` subdirecotry.
+
 The structure of a module looks like this:
 
-	/header/html/header.html
-	/header/html/alternative.html
-	/header/header.css
-	/header/header.js
+	/example/html/example.html
+	/example/html/alternative.html
+	/example/example.css
+	/example/example.js
 	
-To load the `alternative.html` markup include the module as `{{=part.header.alternative}}`.
+To use the `alternative.html` markup include the module as `{{=part.example.alternative}}`.
 
-Every CSS and JS file under `/modules/` and in the `/css/` respectively `/js/` direcorys will be concatinated to a `main.js` and `main.css` file.
+Every CSS and JS file under `/modules/` and in the `/css/` respectively `/js/` direcoriess will be concatinated to a `main.js` and `main.css` file.
 This behaviour can be changed in the `Gulpfile.js`.
 
-The [JSHint][1] settings can and should be changed in the `.jshintrc` file.
+The [JSHint][1] options can, and should, be changed using the `.jshintrc` file.
 
 [0]: https://github.com/gulpjs/gulp
 [1]: https://github.com/jshint/jshint/
