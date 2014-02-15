@@ -6,6 +6,7 @@ var
 	jshint = require('gulp-jshint'),
 	jshintStylish = require('jshint-stylish'),
 	concat = require('gulp-concat'),
+	partials = require('./lib/gulp-partials'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
@@ -32,6 +33,19 @@ gulp.task('server', function(){
 	});
 });
 
+gulp.task('build', function(){
+	// Build html files
+	gulp.src(['./index.html'])
+		.pipe(partials())
+		.pipe(gulp.dest('./html/'));
+
+	// Build CSS files
+	jsconcat();
+
+	// Build JS files
+	cssconcat();
+});
+
 gulp.task('watch', function(){
 	/* This watcher will work even when entire directorys are copy-pasted */
 	var watcher = chokidar.watch(['js','modules', 'css'], {ignored: /\/main.|.DS_Store|\/html|\/vendor/, persistent: true, ignoreInitial: true});
@@ -56,6 +70,10 @@ gulp.task('watch', function(){
 				jstask(event,pathname);
 			break;
 		}
+	});
+
+	process.on('exit', function() {
+		watcher.close();
 	});
 });
 
@@ -117,6 +135,5 @@ function cssconcat() {
 // clean up if an error goes unhandled.
 process.on('exit', function() {
 	if (node) node.kill();
-	watcher.close();
 });
 })();

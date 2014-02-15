@@ -52,7 +52,7 @@
 		}
 
 		function getPage(page, callback){
-			autoload.loadFile(page, function(err, content, obj, root, dependencies, dependees){
+			autoload.loadFile(page, function(err, content, obj, dependencies, dependees){
 
 				if(err) return callback(err);
 
