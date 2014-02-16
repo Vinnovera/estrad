@@ -6,6 +6,7 @@ var
 	jshint = require('gulp-jshint'),
 	jshintStylish = require('jshint-stylish'),
 	concat = require('gulp-concat'),
+	prettify = require('gulp-prettify'),
 	partials = require('./lib/gulp-partials'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
@@ -37,6 +38,7 @@ gulp.task('build', function(){
 	// Build html files
 	gulp.src(['./index.html'])
 		.pipe(partials())
+		.pipe(prettify())
 		.pipe(gulp.dest('./html/'));
 
 	// Build CSS files
