@@ -16,7 +16,7 @@ var
 	jshintRc = JSON.parse(fs.readFileSync('./.jshintrc', 'utf-8')),
 	pkg = JSON.parse(fs.readFileSync('./package.json')),
 	paths = {
-		'server': ['./index.js', './lib/**/*.js'],
+		'server': ['./index.js', './lib/**/*.js', 'routes.json'],
 		'style': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
 		'script': ['./js/**/*.js', './modules/**/*.js', '!js/main.js']
 	},
