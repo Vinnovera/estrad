@@ -14,7 +14,9 @@
     "chalk": "~0.4.0",
     "through": "~2.3.4",
     "async-through": "~0.2.2",
-    "gulp-prettify": "~0.1.2"
+    "gulp-prettify": "~0.1.2",
+    "gulp-util": "^2.2.14",
+    "http-proxy": "^1.0.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
