@@ -19,46 +19,57 @@
 
 	function handler(req, res) {
 		var 
-			url = req.url,
-			ext;
+			url = req.url;
 
 		if(url === "/") url = "/index.html";
-		ext = path.extname(url);
 
-		if(proxyHandler(req,res)) return;
+		fs.exists(__dirname + url, function(exists){
+			var ext;
 
-		switch(ext) {
-			case ".html":
-				console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(url));
-				getPage(url, function(err, content){
+			if(exists) {
+				ext = path.extname(url);
+
+				switch(ext) {
+					case ".html":
+						console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(url));
+						getPage(url, function(err, content){
+							if(err) {
+								res.writeHead(500, "server error");
+								res.end();
+								console.log("[" + chalk.red("server") + "] " + err);
+								return;
+							}
+
+							res.writeHead(200);
+							res.end(content);
+						});
+					break;
+					// Static resourses
+					default:
+						fs.readFile(__dirname + url, function(err, data){
+							if (err) throw err;
+
+							res.writeHead(200);
+							res.end(data);
+						});
+					break;
+				}
+			} else {
+				getProxyUrl(req, function(err, proxyUrl){
 					if(err) {
-						res.writeHead(500, "server error");
-						res.end();
-						console.log("[" + chalk.red("server") + "] " + err);
-						return;
-					}
-
-					res.writeHead(200);
-					res.end(content);
-				});
-			break;
-			// Static resourses
-			default:
-				fs.readFile(__dirname + url, function(err, data){
-					if (err) {
-						res.writeHead(404, "not found");
+						res.writeHead(404);
+						res.write("Not Found");
 						res.end();
 						return;
 					}
 
-					res.writeHead(200);
-					res.end(data);
+					proxy.web(req, res, {target: proxyUrl});
 				});
-			break;
-		}
+			}
+		});
 	}
 
-	function proxyHandler(req, res) {
+	function getProxyUrl(req, callback) {
 		var 
 			domain = 'http://' + req.headers.host,
 			rex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:ww‌​w.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?‌​(?:[\w]*))?)/,
@@ -78,11 +89,11 @@
 					target = domain + routes[key];
 				}
 
-				proxy.web(req, res, {target: target});
-				return true;
+				return callback(null, target);
 			}
 		}
-		return false;
+
+		callback(true);
 	}
 
 	function getPage(page, callback){
