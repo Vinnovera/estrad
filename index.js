@@ -4,6 +4,7 @@
 		app = require("http").createServer(handler),
 		path = require("path"),
 		chalk = require("chalk"),
+		url = require("url"),
 		proxy = require("./lib/proxy"),
 		autoload = require("./lib/autoload"),
 		template = require("./lib/template"),
@@ -15,20 +16,20 @@
 
 	function handler(req, res) {
 		var 
-			url = req.url;
+			pathname = url.parse(req.url).pathname;
 
-		if(url === "/") url = "/index.html";
+		if(pathname === "/") pathname = "/index.html";
 
-		fsh.fileExists(url, function(exists){
+		fsh.fileExists(pathname, function(exists){
 			var ext;
 
 			if(exists) {
-				ext = path.extname(url);
+				ext = path.extname(pathname);
 
 				switch(ext) {
 					case ".html":
-						console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(url));
-						getPage(url, function(err, content){
+						console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
+						getPage(pathname, function(err, content){
 							if(err) {
 								res.writeHead(500, "server error");
 								res.end();
@@ -42,7 +43,7 @@
 					break;
 					// Static resourses
 					default:
-						fsh.fileContents(url, function(err, data){
+						fsh.fileContents(pathname, function(err, data){
 							if (err) throw err;
 
 							res.writeHead(200);
