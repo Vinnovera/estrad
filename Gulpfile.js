@@ -24,7 +24,7 @@ var
 		},
 		'script': {
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
-			'listen': ['modules', 'js'],
+			'listen': ['modules', 'js', 'lib'],
 			'ignore': ['/main.', '/html', '/vendor', '.css']
 		}
 	},
@@ -88,8 +88,6 @@ function startWatcher(event, paths, ignored, callback){
 		ignoredRex = pathsToRex(ignored),
 		watcher = chokidar.watch(paths, {ignored: ignoredRex, persistent: true, ignoreInitial: true});
 
-		console.log(ignoredRex);
-
 	watcher.on(event, function(event, pathname) {
 		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(event) + ": " + chalk.magenta(pathname));
 
@@ -106,7 +104,7 @@ function jsTask(event, path) {
 		case 'add':
 			clearTimeout(jstimeout);
 			jstimeout = setTimeout(function(){
-				jsLint(paths.script);
+				jsLint(paths.script.build);
 				jsConcat();
 			},10);
 		break;

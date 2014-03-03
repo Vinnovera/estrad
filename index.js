@@ -2,20 +2,16 @@
 	"use strict";
 	var
 		app = require("http").createServer(handler),
-		//express = require("express"),
-		//app = express(),
-		proxy = require("http-proxy").createProxyServer(),
 		path = require("path"),
-		fs = require("fs"),
 		chalk = require("chalk"),
+		proxy = require("./lib/proxy"),
 		autoload = require("./lib/autoload"),
 		template = require("./lib/template"),
-		routes = JSON.parse(fs.readFileSync(__dirname + '/routes.json', 'utf-8')),
+		fsh = require("./lib/filehelper"),
 		port = 8080;
 
-		//app.get('/', handler);
-		app.listen(port);
-		console.log("[" + chalk.green("server") + "] Server started at: " + chalk.magenta("http://localhost:" + port));
+	app.listen(port);
+	console.log("[" + chalk.green("server") + "] Server started at: " + chalk.magenta("http://localhost:" + port));
 
 	function handler(req, res) {
 		var 
@@ -23,7 +19,7 @@
 
 		if(url === "/") url = "/index.html";
 
-		fs.exists(__dirname + url, function(exists){
+		fsh.fileExists(url, function(exists){
 			var ext;
 
 			if(exists) {
@@ -46,7 +42,7 @@
 					break;
 					// Static resourses
 					default:
-						fs.readFile(__dirname + url, function(err, data){
+						fsh.fileContents(url, function(err, data){
 							if (err) throw err;
 
 							res.writeHead(200);
@@ -55,7 +51,7 @@
 					break;
 				}
 			} else {
-				getProxyUrl(req, function(err, proxyUrl){
+				proxy.getProxyUrl(req, function(err, proxyUrl){
 					if(err) {
 						res.writeHead(404);
 						res.write("Not Found");
@@ -67,33 +63,6 @@
 				});
 			}
 		});
-	}
-
-	function getProxyUrl(req, callback) {
-		var 
-			domain = 'http://' + req.headers.host,
-			rex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:ww‌​w.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?‌​(?:[\w]*))?)/,
-			url = req.url.replace(/\/+$/, ""),
-			key,
-			target;
-
-		for(key in routes) {
-			if(!routes.hasOwnProperty(key)) continue;
-
-			if(key === url) {
-				req.url = routes[key];
-
-				if(rex.test(routes[key])) {
-					target = routes[key];
-				} else {
-					target = domain + routes[key];
-				}
-
-				return callback(null, target);
-			}
-		}
-
-		callback(true);
 	}
 
 	function getPage(page, callback){
