@@ -20,12 +20,12 @@ var
 		'style': {
 			'build': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
 			'listen': ['modules', 'css'],
-			'ignore': ['/main.', '/html', '/vendor', '.css$']
+			'ignore': ['/main.', '/html', '/vendor']
 		},
 		'script': {
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
 			'listen': ['modules', 'js', 'lib'],
-			'ignore': ['/main.', '/html', '/vendor', '.css']
+			'ignore': ['/main.', '/html', '/vendor']
 		}
 	},
 	node, jstimeout, csstimeout;
@@ -63,17 +63,17 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch']);
+gulp.task('watch', ['csswatch', 'jswatch']);
 
 gulp.task('jswatch', function() {
-	startWatcher('all', paths.script.listen, paths.script.ignore, function (event, pathname){
+	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
 		jsTask(event, pathname);
 	});
 });
 
 gulp.task('csswatch', function() {
-	startWatcher('all', paths.style.listen, 
-		'.css$', function (event, pathname){
+	startWatcher('all', 'css', paths.style.listen, 
+		paths.style.ignore, function (event, pathname){
 		cssTask(event, pathname);
 	});
 });
@@ -83,17 +83,18 @@ gulp.task('default', ['server', 'watch'], function(){
 	gulp.watch(paths.server, ['server']);
 });
 
-function startWatcher(event, paths, ignored, callback){
+function startWatcher(event, ext, paths, ignored, callback){
 	/* This watcher will work even when entire directorys are copy-pasted */
 
 	var
-		ignoredRex = new RegExp(ignored), //pathsToRex(ignored), // This is not the best way to handle the ignore pattern
+		ignoredRex = pathsToRex(ignored),
+		extRex = new RegExp('.' + ext + '$'),
 		watcher = chokidar.watch(paths, {ignored: function(filepath){
-
-			if(path.extname(filepath)) {
-				return !ignoredRex.test(path.basename(filepath));
-			} return false;
-
+			var result = ignoredRex.test(filepath);
+		
+			if(!result && path.extname(filepath)) {
+				return !extRex.test(path.basename(filepath));
+			} else return result;
 		}, persistent: true, ignoreInitial: true});
 
 	watcher.on(event, function(event, pathname) {
