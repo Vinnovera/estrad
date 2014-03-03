@@ -84,8 +84,9 @@ gulp.task('default', ['server', 'watch'], function(){
 
 function startWatcher(event, paths, ignored, callback){
 	/* This watcher will work even when entire directorys are copy-pasted */
+
 	var
-		ignoredRex = pathsToRex(ignored),
+		ignoredRex = pathsToRex(ignored), // This is not the best way to handle the ignore pattern
 		watcher = chokidar.watch(paths, {ignored: ignoredRex, persistent: true, ignoreInitial: true});
 
 	watcher.on(event, function(event, pathname) {
@@ -99,6 +100,11 @@ function startWatcher(event, paths, ignored, callback){
 	});
 }
 
+/**
+ * Tasks
+ */
+
+/* JS */
 function jsTask(event, path) {
 	switch(event) {
 		case 'add':
@@ -128,6 +134,7 @@ function jsConcat() {
 		.pipe(gulp.dest('./js/'));
 }
 
+/* CSS */
 function cssTask(event, path) {
 	switch(event) {
 		case 'add':

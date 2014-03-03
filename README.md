@@ -49,7 +49,7 @@ To buld the files without starting a server or watcher you type:
 
 	gulp buld
 
-This will also build your `html` templates and output it to the folder `./html`.
+This will build, in addition to `css` and `js`, your `html` templates and output it to the folder `./html`.
 
 ## Reverse proxy
 Estrad has reverse proxy functionality. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
