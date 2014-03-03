@@ -6,16 +6,20 @@ This is a tool to make building modular HTML/CSS/JS websites and apps easier.
 It allows you to keep all of a modules code together. To more easily find all the relevant code and to keep the code more structured.
 
 ## Install
-To install this Estrad´s dependencies open a termial window and type:
+To install Estrad´s dependencies, open a termial window and type:
 	
 	npm install
+
+Estrad also uses [Gulp][0], to install it run the command:
+
+	npm install gulp -g
 	
 ## Build and start server
 To build your project and to start a node server to view it you can simply type:
 
 	gulp
 	
-[Gulp][0] will build any CSS and JS files and start a server at port `8080`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
+Gulp will build any CSS and JS files and start a server at port `8080`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
 
 ## Write a module
 First you need a page, see `index.html` as an example. It looks like this:
@@ -39,6 +43,18 @@ Every CSS and JS file under `/modules/` and in the `/css/` respectively `/js/` d
 This behaviour can be changed in the `Gulpfile.js`.
 
 The [JSHint][1] options can, and should, be changed using the `.jshintrc` file.
+
+### Build command
+To buld the files without starting a server or watcher you type:
+
+	gulp buld
+
+This will also build your `html` templates and output it to the folder `./html`.
+
+## Reverse proxy
+Estrad has reverse proxy functionality. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
+
+Any query parameters you add to the local request will be added to the proxy request. If you have added query parameters to the routed url in `routes.json` any local query parameters will replace them.
 
 [0]: https://github.com/gulpjs/gulp
 [1]: https://github.com/jshint/jshint/
