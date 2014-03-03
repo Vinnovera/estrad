@@ -17,8 +17,16 @@ var
 	pkg = JSON.parse(fs.readFileSync('./package.json')),
 	paths = {
 		'server': ['./index.js', './lib/**/*.js', 'routes.json'],
-		'style': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
-		'script': ['./js/**/*.js', './modules/**/*.js', '!js/main.js']
+		'style': {
+			'build': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
+			'listen': ['modules', 'css'],
+			'ignore': ['/main.', '/html', '/vendor', '.js']
+		},
+		'script': {
+			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
+			'listen': ['modules', 'js'],
+			'ignore': ['/main.', '/html', '/vendor', '.css']
+		}
 	},
 	node, jstimeout, csstimeout;
 
@@ -34,6 +42,10 @@ gulp.task('server', function(){
 	});
 });
 
+/**
+ * Build
+ */
+
 gulp.task('build', function(){
 	// Build html files
 	gulp.src(['./index.html'])
@@ -42,40 +54,26 @@ gulp.task('build', function(){
 		.pipe(gulp.dest('./html/'));
 
 	// Build CSS files
-	jsconcat();
+	jsConcat();
 
 	// Build JS files
-	cssconcat();
+	cssConcat();
 });
 
-gulp.task('watch', function(){
-	/* This watcher will work even when entire directorys are copy-pasted */
-	var watcher = chokidar.watch(['js','modules', 'css'], {ignored: /\/main.|.DS_Store|\/html|\/vendor/, persistent: true, ignoreInitial: true});
+/**
+ * Watch
+ */
+gulp.task('watch', ['csswatch', 'jswatch']);
 
-	watcher.on('all', function (event, pathname){
-		var ext = path.extname(pathname);
-
-		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(event) + ": " + chalk.magenta(pathname));
-
-		switch(ext) {
-			case '':
-				/* dir added or removed */
-				csstask(event, pathname);
-				jstask(event, pathname);
-			break;
-			case '.css':
-				/* css file change */
-				csstask(event, pathname);
-			break;
-			case '.js':
-				/* js file change */
-				jstask(event,pathname);
-			break;
-		}
+gulp.task('jswatch', function() {
+	startWatcher('all', paths.script.listen, paths.script.ignore, function (event, pathname){
+		jsTask(event, pathname);
 	});
+});
 
-	process.on('exit', function() {
-		watcher.close();
+gulp.task('csswatch', function() {
+	startWatcher('all', paths.style.listen, paths.style.ignore, function (event, pathname){
+		cssTask(event, pathname);
 	});
 });
 
@@ -84,54 +82,86 @@ gulp.task('default', ['server', 'watch'], function(){
 	gulp.watch(paths.server, ['server']);
 });
 
-function jstask(event, path) {
+function startWatcher(event, paths, ignored, callback){
+	/* This watcher will work even when entire directorys are copy-pasted */
+	var
+		ignoredRex = pathsToRex(ignored),
+		watcher = chokidar.watch(paths, {ignored: ignoredRex, persistent: true, ignoreInitial: true});
+
+		console.log(ignoredRex);
+
+	watcher.on(event, function(event, pathname) {
+		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(event) + ": " + chalk.magenta(pathname));
+
+		callback(event, pathname);
+	});
+
+	process.on('exit', function() {
+		watcher.close();
+	});
+}
+
+function jsTask(event, path) {
 	switch(event) {
 		case 'add':
 			clearTimeout(jstimeout);
 			jstimeout = setTimeout(function(){
-				lint(paths.script);
-				jsconcat();
+				jsLint(paths.script);
+				jsConcat();
 			},10);
 		break;
 		case 'change':
-			lint(path);
+			jsLint(path);
 		case 'unlink':
-			jsconcat();
+			jsConcat();
 		break;
 	}
 }
 
-function lint(path) {
+function jsLint(path) {
 	return gulp.src(path)
 		.pipe(jshint(jshintRc))
 		.pipe(jshint.reporter(jshintStylish));
 }
 
-function jsconcat() {
-	return gulp.src(paths.script)
+function jsConcat() {
+	return gulp.src(paths.script.build)
 		.pipe(concat('main.js'))
 		.pipe(gulp.dest('./js/'));
 }
 
-function csstask(event, path) {
+function cssTask(event, path) {
 	switch(event) {
 		case 'add':
 			clearTimeout(csstimeout);
 			csstimeout = setTimeout(function(){
-				cssconcat();
+				cssConcat();
 			},10);
 		break;
 		case 'change':
 		case 'unlink':
-			cssconcat();
+			cssConcat();
 		break;
 	}
 }
 
-function cssconcat() {
-	return gulp.src(paths.style)
+function cssConcat() {
+	return gulp.src(paths.style.build)
 		.pipe(concat('main.css'))
 		.pipe(gulp.dest('./css/'));
+}
+
+/* Transform an array with paths to a regex */
+function pathsToRex(ignored) {
+	var 
+		baseIgnore = ['.DS_Store', '.zip'],
+		rex = '';
+
+	if(!ignored) ignored = [];
+
+	rex = baseIgnore.concat(ignored).join('|');
+
+	return new RegExp(rex);
 }
 
 // clean up if an error goes unhandled.
