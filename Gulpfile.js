@@ -20,7 +20,7 @@ var
 		'style': {
 			'build': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
 			'listen': ['modules', 'css'],
-			'ignore': ['/main.', '/html', '/vendor', '.js']
+			'ignore': ['/main.', '/html', '/vendor', '.css$']
 		},
 		'script': {
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
@@ -63,7 +63,7 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch', 'jswatch']);
+gulp.task('watch', ['csswatch']);
 
 gulp.task('jswatch', function() {
 	startWatcher('all', paths.script.listen, paths.script.ignore, function (event, pathname){
@@ -72,7 +72,8 @@ gulp.task('jswatch', function() {
 });
 
 gulp.task('csswatch', function() {
-	startWatcher('all', paths.style.listen, paths.style.ignore, function (event, pathname){
+	startWatcher('all', paths.style.listen, 
+		'.css$', function (event, pathname){
 		cssTask(event, pathname);
 	});
 });
@@ -86,8 +87,14 @@ function startWatcher(event, paths, ignored, callback){
 	/* This watcher will work even when entire directorys are copy-pasted */
 
 	var
-		ignoredRex = pathsToRex(ignored), // This is not the best way to handle the ignore pattern
-		watcher = chokidar.watch(paths, {ignored: ignoredRex, persistent: true, ignoreInitial: true});
+		ignoredRex = new RegExp(ignored), //pathsToRex(ignored), // This is not the best way to handle the ignore pattern
+		watcher = chokidar.watch(paths, {ignored: function(filepath){
+
+			if(path.extname(filepath)) {
+				return !ignoredRex.test(path.basename(filepath));
+			} return false;
+
+		}, persistent: true, ignoreInitial: true});
 
 	watcher.on(event, function(event, pathname) {
 		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(event) + ": " + chalk.magenta(pathname));
