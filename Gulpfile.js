@@ -7,6 +7,7 @@ var
 	jshintStylish = require('jshint-stylish'),
 	concat = require('gulp-concat'),
 	prettify = require('gulp-prettify'),
+	compass = require('gulp-compass'),
 	partials = require('./lib/gulp-partials'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
@@ -26,9 +27,14 @@ var
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
 			'listen': ['modules', 'js', 'lib'],
 			'ignore': ['/main.', '/html', '/vendor']
+		},
+		'compass': {
+			'build': ['./modules', './scss'],
+			'listen': ['modules', 'scss'],
+			'ignore': []
 		}
 	},
-	node, jstimeout, csstimeout;
+	node, jstimeout, csstimeout, scsstimeout;
 
 // https://gist.github.com/webdesserts/5632955
 gulp.task('server', function(){
@@ -63,7 +69,7 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch', 'jswatch']);
+gulp.task('watch', ['scsswatch', 'jswatch']);
 
 gulp.task('jswatch', function() {
 	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
@@ -75,6 +81,13 @@ gulp.task('csswatch', function() {
 	startWatcher('all', 'css', paths.style.listen, 
 		paths.style.ignore, function (event, pathname){
 		cssTask(event, pathname);
+	});
+});
+
+gulp.task('scsswatch', function() {
+	startWatcher('all', 'scss', paths.compass.listen, 
+		paths.compass.ignore, function (event, pathname){
+		scssTask(event, pathname);
 	});
 });
 
@@ -162,6 +175,25 @@ function cssConcat() {
 	return gulp.src(paths.style.build)
 		.pipe(concat('main.css'))
 		.pipe(gulp.dest('./css/'));
+}
+
+function scssTask(event, path) {
+	switch(event) {
+		case 'add':
+			clearTimeout(scsstimeout);
+			scsstimeout = setTimeout(function(){
+				scssCompass();
+			},10);
+		break;
+		case 'change':
+		case 'unlink':
+			scssCompass();
+		break;
+	}
+}
+
+function scssCompass() {
+
 }
 
 /* Transform an array with paths to a regex */
