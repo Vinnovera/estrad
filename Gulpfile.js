@@ -7,6 +7,7 @@ var
 	jshintStylish = require('jshint-stylish'),
 	concat = require('gulp-concat'),
 	prettify = require('gulp-prettify'),
+	compass, // = require('gulp-compass'),
 	partials = require('./lib/gulp-partials'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
@@ -26,9 +27,14 @@ var
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
 			'listen': ['modules', 'js', 'lib'],
 			'ignore': ['/main.', '/html', '/vendor']
+		},
+		'compass': {
+			'build': ['./modules', './scss'],
+			'listen': ['modules', 'scss'],
+			'ignore': []
 		}
 	},
-	node, jstimeout, csstimeout;
+	node, jstimeout, csstimeout, scsstimeout;
 
 // https://gist.github.com/webdesserts/5632955
 gulp.task('server', function(){
@@ -63,7 +69,7 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch', 'jswatch']);
+gulp.task('watch', ['scsswatch', 'jswatch']);
 
 gulp.task('jswatch', function() {
 	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
@@ -76,6 +82,16 @@ gulp.task('csswatch', function() {
 		paths.style.ignore, function (event, pathname){
 		cssTask(event, pathname);
 	});
+});
+
+gulp.task('scsswatch', function() {
+	if(compass) compass.kill();
+	compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
+
+	/*startWatcher('all', 'scss', paths.compass.listen, 
+		paths.compass.ignore, function (event, pathname){
+		scssTask(event, pathname);
+	});*/
 });
 
 gulp.task('default', ['server', 'watch'], function(){
@@ -164,6 +180,33 @@ function cssConcat() {
 		.pipe(gulp.dest('./css/'));
 }
 
+function scssTask(event, path) {
+	switch(event) {
+		case 'add':
+			clearTimeout(scsstimeout);
+			scsstimeout = setTimeout(function(){
+				scssCompass();
+			},10);
+		break;
+		case 'change':
+		case 'unlink':
+			scssCompass();
+		break;
+	}
+}
+
+function scssCompass() {
+	gulp.src('./scss/**/*.scss')
+		.pipe(compass({
+			config: './config.rb',
+			css: 'css',
+			sass: 'scss'
+		}))
+		.on('error', function(err){
+			console.log(err.message);
+		});
+}
+
 /* Transform an array with paths to a regex */
 function pathsToRex(ignored) {
 	var 
@@ -177,8 +220,15 @@ function pathsToRex(ignored) {
 	return new RegExp(rex);
 }
 
+process.on('uncaughtException',function(err){
+	console.log(err.message);
+	console.log(err.stack);
+	process.exit(1);
+});
+
 // clean up if an error goes unhandled.
 process.on('exit', function() {
 	if (node) node.kill();
+	if (compass) compass.kill();
 });
 })();
