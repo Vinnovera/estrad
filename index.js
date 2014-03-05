@@ -5,6 +5,7 @@
 		path = require("path"),
 		chalk = require("chalk"),
 		url = require("url"),
+		mime = require('mime'),
 		proxy = require("./lib/proxy"),
 		autoload = require("./lib/autoload"),
 		template = require("./lib/template"),
@@ -37,7 +38,7 @@
 								return;
 							}
 
-							res.writeHead(200);
+							res.writeHead(200, {"Content-Type": "text/html"});
 							res.end(content);
 						});
 					break;
@@ -46,7 +47,7 @@
 						fsh.fileContents(pathname, function(err, data){
 							if (err) throw err;
 
-							res.writeHead(200);
+							res.writeHead(200, {"Content-Type": mime.lookup(pathname)});
 							res.end(data);
 						});
 					break;
