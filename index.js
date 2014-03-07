@@ -57,7 +57,7 @@
 
 			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
 
-			partials.loadFile(pathname, function(err, content){
+			partials(pathname, function(err, content){
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();
