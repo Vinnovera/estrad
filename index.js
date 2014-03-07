@@ -1,20 +1,48 @@
 (function(){
 	"use strict";
 	var
-		app = require("http").createServer(handler),
-		path = require("path"),
 		chalk = require("chalk"),
 		url = require("url"),
-		mime = require('mime'),
+		express = require("express"),
+		app = express(),
 		proxy = require("./lib/proxy"),
 		autoload = require("./lib/autoload"),
 		template = require("./lib/template"),
 		fsh = require("./lib/filehelper"),
 		port = 8080;
 
+	/**
+	 * Handle proxy requests
+	 */
+	app.use(function(req, res, next){
+		proxy.getProxyUrl(req, function(err, proxyUrl){
+			if(err) return next();
+
+			proxy.web(req, res, {target: proxyUrl});
+		});
+	});
+
+	/**
+	 * Handle requests for HTML files
+	 * These files will be templated
+	 */
+	app.get('/', handler);
+	app.get('*.html', handler);
+
+	/**
+	 * Handle requests for static files
+	 */
+	app.use(express.static(__dirname + '/'));
+
+	/**
+	 * Accept requests
+	 */
 	app.listen(port);
 	console.log("[" + chalk.green("server") + "] Server started at: " + chalk.magenta("http://localhost:" + port));
 
+	/**
+	 * HTML file handler
+	 */
 	function handler(req, res) {
 		var 
 			pathname = url.parse(req.url).pathname;
@@ -22,48 +50,25 @@
 		if(pathname === "/") pathname = "/index.html";
 
 		fsh.fileExists(pathname, function(exists){
-			var ext;
-
-			if(exists) {
-				ext = path.extname(pathname);
-
-				switch(ext) {
-					case ".html":
-						console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
-						getPage(pathname, function(err, content){
-							if(err) {
-								res.writeHead(500, "server error");
-								res.end();
-								console.log("[" + chalk.red("server") + "] " + err);
-								return;
-							}
-
-							res.writeHead(200, {"Content-Type": "text/html"});
-							res.end(content);
-						});
-					break;
-					// Static resourses
-					default:
-						fsh.fileContents(pathname, function(err, data){
-							if (err) throw err;
-
-							res.writeHead(200, {"Content-Type": mime.lookup(pathname)});
-							res.end(data);
-						});
-					break;
-				}
-			} else {
-				proxy.getProxyUrl(req, function(err, proxyUrl){
-					if(err) {
-						res.writeHead(404);
-						res.write("Not Found");
-						res.end();
-						return;
-					}
-
-					proxy.web(req, res, {target: proxyUrl});
-				});
+			if(!exists) {
+				res.writeHead(404, 'Not Found');
+				res.end('Not found');
+				return;
 			}
+
+			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
+
+			getPage(pathname, function(err, content){
+				if(err) {
+					res.writeHead(500, "server error");
+					res.end();
+					console.log("[" + chalk.red("server") + "] " + err);
+					return;
+				}
+
+				res.writeHead(200, {"Content-Type": "text/html"});
+				res.end(content);
+			});
 		});
 	}
 
