@@ -6,8 +6,8 @@
 		express = require("express"),
 		app = express(),
 		proxy = require("./lib/proxy"),
-		partials = require("./lib/partials"),
-		fsh = require("./lib/filehelper"),
+		partials = require("estrad-template"),
+		fs = require("fs"),
 		port = 8080;
 
 	/**
@@ -48,7 +48,7 @@
 
 		if(pathname === "/") pathname = "/index.html";
 
-		fsh.fileExists(pathname, function(exists){
+		fs.exists(process.cwd() + pathname, function(exists){
 			if(!exists) {
 				res.writeHead(404, 'Not Found');
 				res.end('Not found');
