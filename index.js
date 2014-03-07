@@ -6,8 +6,7 @@
 		express = require("express"),
 		app = express(),
 		proxy = require("./lib/proxy"),
-		autoload = require("./lib/autoload"),
-		template = require("./lib/template"),
+		partials = require("./lib/partials"),
 		fsh = require("./lib/filehelper"),
 		port = 8080;
 
@@ -58,7 +57,7 @@
 
 			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
 
-			getPage(pathname, function(err, content){
+			partials.loadFile(pathname, function(err, content){
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();
@@ -68,23 +67,6 @@
 
 				res.writeHead(200, {"Content-Type": "text/html"});
 				res.end(content);
-			});
-		});
-	}
-
-	function getPage(page, callback){
-		autoload.loadFile(page, function(err, content, obj, dependencies, dependees){
-
-			if(err) return callback(err);
-
-			// Solve dependencies
-			template.solveDependencies(obj, dependees, dependencies, function(err, obj){
-				var page;
-				if(err) return callback(err);
-
-				page = template.interpolate(content, obj);
-
-				callback(null, page);
 			});
 		});
 	}
