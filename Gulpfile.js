@@ -8,7 +8,7 @@ var
 	concat = require('gulp-concat'),
 	prettify = require('gulp-prettify'),
 	compass, // = require('gulp-compass'),
-	partials = require('./lib/gulp-partials'),
+	partials = require('gulp-estrad-template'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
