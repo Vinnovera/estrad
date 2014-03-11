@@ -26,6 +26,11 @@
     "type": "git",
     "url": "https://github.com/Vinnovera/estrad.git"
   },
+  "bugs": {
+    "url": "https://github.com/Vinnovera/estrad/issues"
+  },
+  "homepage": "https://github.com/Vinnovera/estrad",
+  "readmeFilename": "README.md",
   "author": "Per Stenström",
   "license": "BSD-2-Clause"
 }
