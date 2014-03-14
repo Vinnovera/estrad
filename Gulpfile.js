@@ -54,7 +54,7 @@ gulp.task('server', function(){
 
 gulp.task('build', function(){
 	// Build html files
-	gulp.src(['./index.html'])
+	gulp.src(['./index.html', './pages/**/*.html'])
 		.pipe(partials())
 		.pipe(prettify())
 		.pipe(gulp.dest('./html/'));
