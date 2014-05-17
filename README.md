@@ -22,7 +22,7 @@ To build your project and to start a node server to view it you can simply type:
 Gulp will build any CSS and JS files and start a server at port `8080`, the port number can be changed in `index.js`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
 
 ## Write a module
-Estrad uses a slightly modified version of [doT][3] to build the html files. Use the `it` namespace to access properties set in the `json` file and `part` to include another module.
+Estrad uses a slightly modified version of [doT][2] to build the html files. Use the `it` namespace to access properties set in the `json` file and `part` to include another module.
 
 First you need a page, see `index.html` for an example. It looks like this:
 
