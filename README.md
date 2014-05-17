@@ -10,7 +10,7 @@ To install Estrad´s dependencies, open a termial window and type:
 	
 	npm install
 
-Estrad also uses [Gulp][0], to install it run the command:
+Estrad also uses [Gulp][0] which needs to be installed globally, to install it run the command:
 
 	npm install gulp -g
 	
@@ -19,25 +19,28 @@ To build your project and to start a node server to view it you can simply type:
 
 	gulp
 	
-Gulp will build any CSS and JS files and start a server at port `8080`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
+Gulp will build any CSS and JS files and start a server at port `8080`, the port number can be changed in `index.js`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
 
 ## Write a module
-First you need a page, see `index.html` as an example. It looks like this:
+Estrad uses a slightly modified version of [doT][3] to build the html files. Use the `it` namespace to access properties set in the `json` file and `part` to include another module.
+
+First you need a page, see `index.html` for an example. It looks like this:
 
 	{{=part.header}}
 	{{=part.example}}
 	{{=part.footer}}
 
-If you open it in the browser right now that's what it will look like too. `header`, `example` and `footer` are names of modules that the server will look for and interpolate in its place. All modules needs to be placed under a `/modules/` subdirecotry.
+If you open it in the browser right now that's what it will look like too. `header`, `example` and `footer` are names of modules that the server will look for and interpolate in its place. The default name of the modules subdirectory is `modules/`.
 
 The structure of a module looks like this:
 
-	/example/html/example.html
-	/example/html/alternative.html
+	/example/template.html
+	/example/example.json
+	/example/alternative.json	
 	/example/example.css
 	/example/example.js
 	
-To use the `alternative.html` markup include the module as `{{=part.example.alternative}}`.
+To use the `alternative.json` file include the module as `{{=part.example.alternative}}`.
 
 Every CSS and JS file under `/modules/` and in the `/css/` respectively `/js/` direcoriess will be concatinated to a `main.js` and `main.css` file.
 This behaviour can be changed in the `Gulpfile.js`.
@@ -47,7 +50,7 @@ The [JSHint][1] options can, and should, be changed using the `.jshintrc` file.
 ### Build command
 To buld the files without starting a server or watcher you type:
 
-	gulp buld
+	gulp build
 
 This will build, in addition to `css` and `js`, your `html` templates and output it to the folder `./html`.
 
