@@ -7,7 +7,12 @@
   "dependencies": {
     "estrad-template": "git+https://github.com/Vinnovera/estrad-template.git#c806bbc4a57c4dd34d687095f0e0bba598e27665",
     "gulp-estrad-template": "git+https://github.com/Vinnovera/gulp-estrad-template.git#4157e0ebeb8720e3d0bed7800712e9e3919a5693",
-    "gulp-svg2png": "^0.2.3"
+    "gulp-imagemin": "^0.6.1",
+    "gulp-svg2png": "^0.2.3",
+    "imagemin-gifsicle": "^0.1.1",
+    "imagemin-jpegtran": "^0.1.0",
+    "imagemin-optipng": "^0.1.0",
+    "imagemin-svgo": "^0.1.0"
   },
   "devDependencies": {
     "gulp": "~3.5.0",

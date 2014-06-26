@@ -10,6 +10,12 @@ var
 	compass, // = require('gulp-compass'),
 	partials = require('gulp-estrad-template'),
 	svg2png = require('gulp-svg2png'),
+	imagemin = require('gulp-imagemin'),
+	optipng = require('imagemin-optipng'),
+	gifsicle = require('imagemin-gifsicle'),
+	jpegtran = require('imagemin-jpegtran'),
+	svgo = require('imagemin-svgo'),
+
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
@@ -35,6 +41,10 @@ var
 			'ignore': []
 		},
 		'svg2png': {
+			'listen': ['img'],
+			'ignore': []
+		},
+		'image': {
 			'listen': ['img'],
 			'ignore': []
 		}
@@ -74,7 +84,7 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch', 'jswatch', 'svgwatch']);
+gulp.task('watch', ['csswatch', 'jswatch', 'svgwatch', 'imagewatch']);
 
 gulp.task('jswatch', function() {
 	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
@@ -101,6 +111,13 @@ gulp.task('scsswatch', function() {
 
 gulp.task('svgwatch', function() {
 	startWatcher('all', 'svg', paths.svg2png.listen, paths.svg2png.ignore, svg2pngTask);
+});
+
+gulp.task('imagewatch', function() {
+	startWatcher('all', 'jpg', paths.image.listen, paths.image.ignore, imageTask);
+	startWatcher('all', 'gif', paths.image.listen, paths.image.ignore, imageTask);
+	startWatcher('all', 'png', paths.image.listen, paths.image.ignore, imageTask);
+	startWatcher('all', 'svg', paths.image.listen, paths.image.ignore, imageTask);
 });
 
 gulp.task('default', ['server', 'watch'], function(){
@@ -220,12 +237,27 @@ function svg2pngTask(event, svgFile) {
 	switch(event) {
 		case 'add':
 		case 'change':
-			gulp.src(svgFile)
+			return gulp.src(svgFile)
 				.pipe(svg2png())
 				.pipe(gulp.dest(path.dirname(svgFile)));
 		break;
 		case 'unlink':
 			fs.unlink(svgFile.replace('.svg','.png'));
+		break;
+	}
+}
+
+function imageTask(event, imageFile) {
+	switch(event) {
+		case 'add':
+		case 'change':
+			return gulp.src(imageFile)
+				.pipe(imagemin({
+					progressive: true,
+					svgoPlugins: [{removeViewBox: false}],
+					use: [optipng(), gifsicle(), jpegtran(), svgo()]
+				}))
+				.pipe(gulp.dest(path.dirname(imageFile)));
 		break;
 	}
 }
