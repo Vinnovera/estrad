@@ -9,6 +9,7 @@ var
 	prettify = require('gulp-prettify'),
 	compass, // = require('gulp-compass'),
 	partials = require('gulp-estrad-template'),
+	svg2png = require('gulp-svg2png'),
 	chokidar = require('chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
@@ -31,6 +32,10 @@ var
 		'compass': {
 			'build': ['./modules', './scss'],
 			'listen': ['modules', 'scss'],
+			'ignore': []
+		},
+		'svg2png': {
+			'listen': ['img'],
 			'ignore': []
 		}
 	},
@@ -69,7 +74,7 @@ gulp.task('build', function(){
 /**
  * Watch
  */
-gulp.task('watch', ['scsswatch', 'jswatch']);
+gulp.task('watch', ['csswatch', 'jswatch', 'svgwatch']);
 
 gulp.task('jswatch', function() {
 	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
@@ -92,6 +97,10 @@ gulp.task('scsswatch', function() {
 		paths.compass.ignore, function (event, pathname){
 		scssTask(event, pathname);
 	});*/
+});
+
+gulp.task('svgwatch', function() {
+	startWatcher('all', 'svg', paths.svg2png.listen, paths.svg2png.ignore, svg2pngTask);
 });
 
 gulp.task('default', ['server', 'watch'], function(){
@@ -205,6 +214,20 @@ function scssCompass() {
 		.on('error', function(err){
 			console.log(err.message);
 		});
+}
+
+function svg2pngTask(event, svgFile) {
+	switch(event) {
+		case 'add':
+		case 'change':
+			gulp.src(svgFile)
+				.pipe(svg2png())
+				.pipe(gulp.dest(path.dirname(svgFile)));
+		break;
+		case 'unlink':
+			fs.unlink(svgFile.replace('.svg','.png'));
+		break;
+	}
 }
 
 /* Transform an array with paths to a regex */
