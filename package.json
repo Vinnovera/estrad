@@ -5,8 +5,8 @@
   "description": "A tool to create modular static frontend templates with a mocked backend",
   "main": "index.js",
   "dependencies": {
-    "estrad-template": "git+https://github.com/Vinnovera/estrad-template.git#c806bbc4a57c4dd34d687095f0e0bba598e27665",
-    "gulp-estrad-template": "git+https://github.com/Vinnovera/gulp-estrad-template.git#4157e0ebeb8720e3d0bed7800712e9e3919a5693",
+    "estrad-template": "git+https://github.com/Vinnovera/estrad-template.git#2e10fc09ad513ddbe8ec3ed7f2771dfb376dae51",
+    "gulp-estrad-template": "git+https://github.com/Vinnovera/gulp-estrad-template.git#956861954c120affd3d7154a243b2719086776f7",
     "gulp-imagemin": "^0.6.1",
     "gulp-svg2png": "^0.2.3",
     "imagemin-gifsicle": "^0.1.1",
