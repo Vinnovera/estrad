@@ -16,10 +16,10 @@ var
 	jpegtran = require('imagemin-jpegtran'),
 	svgo = require('imagemin-svgo'),
 
-	chokidar = require('chokidar'),
+	chokidar = require('glob-chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
-	spawn = require('child_process').spawn,
+	spawn = require('win-spawn'), // 'child_process.spawn() that works with windows'
 	fs = require('fs'),
 	jshintRc = JSON.parse(fs.readFileSync('./.jshintrc', 'utf-8')),
 	pkg = JSON.parse(fs.readFileSync('./package.json')),
@@ -27,33 +27,25 @@ var
 		'server': ['./index.js', './lib/**/*.js', 'routes.json'],
 		'style': {
 			'build': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
-			'listen': ['modules', 'css'],
-			'ignore': ['/main.', '/html', '/vendor']
+			'listen': ['modules/**/*.css', 'css/**/*.css'],
 		},
 		'script': {
 			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
-			'listen': ['modules', 'js', 'lib'],
-			'ignore': ['/main.', '/html', '/vendor']
-		},
-		'compass': {
-			'build': ['./modules', './scss'],
-			'listen': ['modules', 'scss'],
-			'ignore': []
+			'listen': [process.cwd() + '/**/*.js', '!/node_modules/**/*.js'],
+			'dest': 'main.js'
 		},
 		'svg2png': {
-			'listen': ['img'],
-			'ignore': []
+			'listen': ['img/**/*.svg']
 		},
 		'image': {
-			'listen': ['img'],
-			'ignore': []
+			'listen': ['img/**/*.jpg', 'img/**/*.gif', 'img/**/*.png', 'img/**/*.svg']
 		},
 		'build': {
 			'src': ['./**/*.html', '!./html/**/*.html', '!./modules/**/*.html', '!./node_modules/**/*.html'],
 			'dest': './package'
 		}
 	},
-	node, jstimeout, csstimeout, scsstimeout;
+	node, jstimeout, csstimeout;
 
 // https://gist.github.com/webdesserts/5632955
 gulp.task('server', function(){
@@ -71,13 +63,7 @@ gulp.task('server', function(){
  * Build
  */
 
-gulp.task('build', ['buildhtml'], function() {
-	// Build CSS files
-	jsConcat();
-
-	// Build JS files
-	cssConcat();
-});
+gulp.task('build', ['buildhtml']);
 
 gulp.task('buildhtml', function() {
 	var 
@@ -95,40 +81,29 @@ gulp.task('buildhtml', function() {
 /**
  * Watch
  */
-gulp.task('watch', ['csswatch', 'jswatch', 'svgwatch', 'imagewatch']);
+gulp.task('watch', ['jswatch', 'svgwatch', 'imagewatch']);
 
 gulp.task('jswatch', function() {
-	startWatcher('all', 'js', paths.script.listen, paths.script.ignore, function (event, pathname){
+	startWatcher(paths.script.listen, function(event, pathname) {
 		jsTask(event, pathname);
 	});
 });
 
 gulp.task('csswatch', function() {
-	startWatcher('all', 'css', paths.style.listen, 
-		paths.style.ignore, function (event, pathname){
-		cssTask(event, pathname);
-	});
+	startWatcher(paths.style.listen, cssTask);
 });
 
 gulp.task('scsswatch', function() {
 	if(compass) compass.kill();
 	compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
-
-	/*startWatcher('all', 'scss', paths.compass.listen, 
-		paths.compass.ignore, function (event, pathname){
-		scssTask(event, pathname);
-	});*/
 });
 
 gulp.task('svgwatch', function() {
-	startWatcher('all', 'svg', paths.svg2png.listen, paths.svg2png.ignore, svg2pngTask);
+	startWatcher(paths.svg2png.listen, svg2pngTask);
 });
 
 gulp.task('imagewatch', function() {
-	startWatcher('all', 'jpg', paths.image.listen, paths.image.ignore, imageTask);
-	startWatcher('all', 'gif', paths.image.listen, paths.image.ignore, imageTask);
-	startWatcher('all', 'png', paths.image.listen, paths.image.ignore, imageTask);
-	startWatcher('all', 'svg', paths.image.listen, paths.image.ignore, imageTask);
+	startWatcher(paths.image.listen, imageTask);
 });
 
 gulp.task('default', ['server', 'watch'], function(){
@@ -136,28 +111,11 @@ gulp.task('default', ['server', 'watch'], function(){
 	gulp.watch(paths.server, ['server']);
 });
 
-function startWatcher(event, ext, paths, ignored, callback){
-	/* This watcher will work even when entire directorys are copy-pasted */
+function startWatcher(paths, callback) {
+	chokidar(paths, function(ev, path) {
+		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(ev) + ": " + chalk.magenta(path));
 
-	var
-		ignoredRex = pathsToRex(ignored),
-		extRex = new RegExp('.' + ext + '$'),
-		watcher = chokidar.watch(paths, {ignored: function(filepath){
-			var result = ignoredRex.test(filepath);
-		
-			if(!result && path.extname(filepath)) {
-				return !extRex.test(path.basename(filepath));
-			} else return result;
-		}, persistent: true, ignoreInitial: true});
-
-	watcher.on(event, function(event, pathname) {
-		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(event) + ": " + chalk.magenta(pathname));
-
-		callback(event, pathname);
-	});
-
-	process.on('exit', function() {
-		watcher.close();
+		callback(ev, path);
 	});
 }
 
@@ -171,14 +129,12 @@ function jsTask(event, path) {
 		case 'add':
 			clearTimeout(jstimeout);
 			jstimeout = setTimeout(function(){
-				jsLint(paths.script.build);
-				jsConcat();
+				jsLint(path);
 			},10);
 		break;
 		case 'change':
 			jsLint(path);
 		case 'unlink':
-			jsConcat();
 		break;
 	}
 }
@@ -189,12 +145,6 @@ function jsLint(path) {
 		.pipe(jshint.reporter(jshintStylish));
 }
 
-function jsConcat() {
-	return gulp.src(paths.script.build)
-		.pipe(concat('main.js'))
-		.pipe(gulp.dest('./js/'));
-}
-
 /* CSS */
 function cssTask(event, path) {
 	switch(event) {
@@ -202,7 +152,7 @@ function cssTask(event, path) {
 			clearTimeout(csstimeout);
 			csstimeout = setTimeout(function(){
 				cssConcat();
-			},10);
+			}, 10);
 		break;
 		case 'change':
 		case 'unlink':
@@ -215,33 +165,6 @@ function cssConcat() {
 	return gulp.src(paths.style.build)
 		.pipe(concat('main.css'))
 		.pipe(gulp.dest('./css/'));
-}
-
-function scssTask(event, path) {
-	switch(event) {
-		case 'add':
-			clearTimeout(scsstimeout);
-			scsstimeout = setTimeout(function(){
-				scssCompass();
-			},10);
-		break;
-		case 'change':
-		case 'unlink':
-			scssCompass();
-		break;
-	}
-}
-
-function scssCompass() {
-	gulp.src('./scss/**/*.scss')
-		.pipe(compass({
-			config: './config.rb',
-			css: 'css',
-			sass: 'scss'
-		}))
-		.on('error', function(err){
-			console.log(err.message);
-		});
 }
 
 function svg2pngTask(event, svgFile) {
@@ -271,19 +194,6 @@ function imageTask(event, imageFile) {
 				.pipe(gulp.dest(path.dirname(imageFile)));
 		break;
 	}
-}
-
-/* Transform an array with paths to a regex */
-function pathsToRex(ignored) {
-	var 
-		baseIgnore = ['.DS_Store', '.zip'],
-		rex = '';
-
-	if(!ignored) ignored = [];
-
-	rex = baseIgnore.concat(ignored).join('|');
-
-	return new RegExp(rex);
 }
 
 process.on('uncaughtException',function(err){
