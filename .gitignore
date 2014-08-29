@@ -2,3 +2,4 @@
 .DS_Store
 *.sublime-*
 .sass-cache
+/package

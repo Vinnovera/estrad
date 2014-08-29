@@ -47,6 +47,10 @@ var
 		'image': {
 			'listen': ['img'],
 			'ignore': []
+		},
+		'build': {
+			'src': ['./**/*.html', '!./html/**/*.html', '!./modules/**/*.html', '!./node_modules/**/*.html'],
+			'dest': './package'
 		}
 	},
 	node, jstimeout, csstimeout, scsstimeout;
@@ -67,18 +71,25 @@ gulp.task('server', function(){
  * Build
  */
 
-gulp.task('build', function(){
-	// Build html files
-	gulp.src(['./index.html', './pages/**/*.html'])
-		.pipe(partials())
-		.pipe(prettify())
-		.pipe(gulp.dest('./html/'));
-
+gulp.task('build', ['buildhtml'], function() {
 	// Build CSS files
 	jsConcat();
 
 	// Build JS files
 	cssConcat();
+});
+
+gulp.task('buildhtml', function() {
+	var 
+		srcPaths = paths.build.src;
+
+	srcPaths.push('!' + paths.build.dest + '/**/*.html');
+
+	// Build html files
+	return gulp.src(srcPaths)
+		.pipe(partials())
+		.pipe(prettify())
+		.pipe(gulp.dest(paths.build.dest));
 });
 
 /**
