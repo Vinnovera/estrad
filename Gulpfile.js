@@ -7,7 +7,6 @@ var
 	jshintStylish = require('jshint-stylish'),
 	concat = require('gulp-concat'),
 	prettify = require('gulp-prettify'),
-	compass, // = require('gulp-compass'),
 	partials = require('gulp-estrad-template'),
 	svg2png = require('gulp-svg2png'),
 	imagemin = require('gulp-imagemin'),
@@ -19,36 +18,19 @@ var
 	chokidar = require('glob-chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
-	spawn = require('win-spawn'), // 'child_process.spawn() that works with windows'
+	// 'child_process.spawn() that works with windows'
+	spawn = require('win-spawn'),
 	fs = require('fs'),
 	jshintRc = JSON.parse(fs.readFileSync('./.jshintrc', 'utf-8')),
 	pkg = JSON.parse(fs.readFileSync('./package.json')),
-	paths = {
-		'server': ['./index.js', './lib/**/*.js', 'routes.json'],
-		'style': {
-			'build': ['./css/**/*.css', './modules/**/*.css', '!css/main.css'],
-			'listen': ['modules/**/*.css', 'css/**/*.css'],
-		},
-		'script': {
-			'build': ['./js/**/*.js', './modules/**/*.js', '!js/main.js'],
-			'listen': [process.cwd() + '/**/*.js', '!/node_modules/**/*.js'],
-			'dest': 'main.js'
-		},
-		'svg2png': {
-			'listen': ['img/**/*.svg']
-		},
-		'image': {
-			'listen': ['img/**/*.jpg', 'img/**/*.gif', 'img/**/*.png', 'img/**/*.svg']
-		},
-		'build': {
-			'src': ['./**/*.html', '!./html/**/*.html', '!./modules/**/*.html', '!./node_modules/**/*.html'],
-			'dest': './package'
-		}
-	},
-	node, jstimeout, csstimeout;
+	opt = JSON.parse(fs.readFileSync('./estrad.json')),
+	paths = opt.paths,
+	node, compass, jstimeout, csstimeout;
 
 // https://gist.github.com/webdesserts/5632955
-gulp.task('server', function(){
+gulp.task('server', function() {
+	if(!opt.process.server) return; 
+
 	if(node) node.kill();
 	node = spawn('node', ['./index.js'], {stdio: 'inherit'});
 
@@ -62,12 +44,13 @@ gulp.task('server', function(){
 /**
  * Build
  */
-
-gulp.task('build', ['buildhtml']);
+gulp.task('build', ['buildhtml', 'compasscompile']);
 
 gulp.task('buildhtml', function() {
 	var 
 		srcPaths = paths.build.src;
+
+	if(!opt.build.html) return;
 
 	srcPaths.push('!' + paths.build.dest + '/**/*.html');
 
@@ -78,37 +61,53 @@ gulp.task('buildhtml', function() {
 		.pipe(gulp.dest(paths.build.dest));
 });
 
+gulp.task('compasscompile', function() {
+	if(!opt.build.compass) return;
+
+	spawn('compass', ['compile'], {stdio: 'inherit'});
+});
+
 /**
  * Watch
  */
-gulp.task('watch', ['jswatch', 'svgwatch', 'imagewatch']);
+gulp.task('watch', ['jswatch', 'svgwatch', 'imagewatch', 'csswatch', 'compasswatch']);
 
 gulp.task('jswatch', function() {
-	startWatcher(paths.script.listen, function(event, pathname) {
-		jsTask(event, pathname);
-	});
+	if(!opt.watch.js) return;
+
+	startWatcher(paths.script.listen, jsTask);
 });
 
 gulp.task('csswatch', function() {
+	if(!opt.watch.css) return; 
+
 	startWatcher(paths.style.listen, cssTask);
 });
 
-gulp.task('scsswatch', function() {
+gulp.task('compasswatch', function() {
+	if(!opt.process.compass) return; 
+
 	if(compass) compass.kill();
 	compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 });
 
 gulp.task('svgwatch', function() {
+	if(!opt.watch.svg) return;
+
 	startWatcher(paths.svg2png.listen, svg2pngTask);
 });
 
 gulp.task('imagewatch', function() {
+	if(!opt.watch.images) return;
+
 	startWatcher(paths.image.listen, imageTask);
 });
 
 gulp.task('default', ['server', 'watch'], function(){
 	// Start the server, if a change is detected restart it
-	gulp.watch(paths.server, ['server']);
+	if(opt.watch.server) {
+		gulp.watch(paths.server, ['server']);
+	}
 });
 
 function startWatcher(paths, callback) {
@@ -140,6 +139,8 @@ function jsTask(event, path) {
 }
 
 function jsLint(path) {
+	if(!opt.task.js.jshint) return;
+
 	return gulp.src(path)
 		.pipe(jshint(jshintRc))
 		.pipe(jshint.reporter(jshintStylish));
@@ -162,6 +163,8 @@ function cssTask(event, path) {
 }
 
 function cssConcat() {
+	if(!opt.task.css.concat) return;
+
 	return gulp.src(paths.style.build)
 		.pipe(concat('main.css'))
 		.pipe(gulp.dest('./css/'));
@@ -171,9 +174,7 @@ function svg2pngTask(event, svgFile) {
 	switch(event) {
 		case 'add':
 		case 'change':
-			return gulp.src(svgFile)
-				.pipe(svg2png())
-				.pipe(gulp.dest(path.dirname(svgFile)));
+			svgSvgToPng(svgFile);
 		break;
 		case 'unlink':
 			fs.unlink(svgFile.replace('.svg','.png'));
@@ -181,19 +182,33 @@ function svg2pngTask(event, svgFile) {
 	}
 }
 
+function svgSvgToPng(svgFile) {
+	if(!opt.task.svg.svg2png) return;
+
+	return gulp.src(svgFile)
+		.pipe(svg2png())
+		.pipe(gulp.dest(path.dirname(svgFile)));
+}
+
 function imageTask(event, imageFile) {
 	switch(event) {
 		case 'add':
 		case 'change':
-			return gulp.src(imageFile)
-				.pipe(imagemin({
-					progressive: true,
-					svgoPlugins: [{removeViewBox: false}],
-					use: [optipng(), gifsicle(), jpegtran(), svgo()]
-				}))
-				.pipe(gulp.dest(path.dirname(imageFile)));
+			imageMin(imageFile);
 		break;
 	}
+}
+
+function imageMin(imageFile) {
+	if(!opt.task.image.minify) return;
+
+	return gulp.src(imageFile)
+		.pipe(imagemin({
+			progressive: true,
+			svgoPlugins: [{removeViewBox: false}],
+			use: [optipng(), gifsicle(), jpegtran(), svgo()]
+		}))
+		.pipe(gulp.dest(path.dirname(imageFile)));
 }
 
 process.on('uncaughtException',function(err){

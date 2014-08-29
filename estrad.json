@@ -1,0 +1,84 @@
+{
+	"build": {
+		"html": true,
+		"compass": false
+		},
+	"watch": {
+		"images": true,
+		"svg":    true,
+		"js":     true,
+		"css":    false,
+		"server": true
+		},
+	"process": {
+		"server":  true,
+		"compass": false
+		},
+	"task": {
+		"js": {
+			"jshint": true
+			},
+		"css": {
+			"concat": true
+			},
+		"svg": {
+			"svg2png": true
+			},
+		"images": {
+			"minify": true
+		} 
+		},
+	"paths": {
+		"server": [
+			"./index.js", 
+			"./lib/**/*.js", 
+			"routes.json"
+			],
+		"style": {
+			"build": [
+				"./css/**/*.css", 
+				"./modules/**/*.css", 
+				"!css/main.css"
+			],
+			"listen": [
+				"modules/**/*.css", 
+				"css/**/*.css"
+			]
+			},
+		"script": {
+			"build": [
+				"./js/**/*.js", 
+				"./modules/**/*.js", 
+				"!js/main.js"
+			],
+			"listen": [
+				"js/**/*.js", 
+				"modules/**/*.js", 
+				"!/node_modules/**/*.js"
+			],
+			"dest": "main.js"
+			},
+		"svg2png": {
+			"listen": [
+				"img/**/*.svg"
+			]
+			},
+		"image": {
+			"listen": [
+				"img/**/*.jpg", 
+				"img/**/*.gif", 
+				"img/**/*.png", 
+				"img/**/*.svg"
+			]
+			},
+		"build": {
+			"src": [
+				"./**/*.html", 
+				"!./html/**/*.html", 
+				"!./modules/**/*.html", 
+				"!./node_modules/**/*.html"
+			],
+			"dest": "./package"
+		}
+	}
+}
