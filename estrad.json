@@ -1,6 +1,6 @@
 {
 	"build": {
-		"html": true,
+		"html":    true,
 		"compass": false
 		},
 	"watch": {
@@ -29,7 +29,11 @@
 		} 
 		},
 	"server": {
-		"port": 8080
+		"port": 8080,
+		"template": {
+			"folder": "modules",
+			"templateSettings": {}
+		}
 		},
 	"paths": {
 		"server": {
@@ -44,7 +48,8 @@
 			"src": [
 				"./css/**/*.css", 
 				"./modules/**/*.css", 
-				"!css/main.css"
+				"!css/main.css",
+				"!/node_modules/**/*.js"
 			],
 			"listen": [
 				"modules/**/*.css", 
@@ -52,7 +57,7 @@
 			],
 			"dest": {
 				"file": "main.css",
-				"dir": "./css/"
+				"dir":  "./css/"
 			}
 			},
 		"script": {
@@ -78,8 +83,7 @@
 			},
 		"build": {
 			"src": [
-				"./**/*.html", 
-				"!./html/**/*.html", 
+				"./**/*.html",
 				"!./modules/**/*.html", 
 				"!./node_modules/**/*.html"
 			],

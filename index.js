@@ -58,7 +58,7 @@
 
 			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, function(err, content) {
+			partials(pathname, opt.server.template, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();
