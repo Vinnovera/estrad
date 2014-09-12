@@ -1,4 +1,4 @@
-(function(){
+(function() {
 	"use strict";
 	var
 		chalk = require("chalk"),
@@ -8,13 +8,14 @@
 		proxy = require("./lib/proxy"),
 		partials = require("estrad-template"),
 		fs = require("fs"),
-		port = 8080;
+		opt = JSON.parse(fs.readFileSync('./estrad.json')),
+		port = opt.server.port;
 
 	/**
 	 * Handle proxy requests
 	 */
-	app.use(function(req, res, next){
-		proxy.getProxyUrl(req, function(err, proxyUrl){
+	app.use(function(req, res, next) {
+		proxy.getProxyUrl(req, function(err, proxyUrl) {
 			if(err) return next();
 
 			proxy.web(req, res, {target: proxyUrl});
@@ -48,7 +49,7 @@
 
 		if(pathname === "/") pathname = "/index.html";
 
-		fs.exists(process.cwd() + pathname, function(exists){
+		fs.exists(process.cwd() + pathname, function(exists) {
 			if(!exists) {
 				res.writeHead(404, 'Not Found');
 				res.end('Not found');
@@ -57,7 +58,7 @@
 
 			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, function(err, content){
+			partials(pathname, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();

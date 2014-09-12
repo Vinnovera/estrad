@@ -32,7 +32,7 @@ gulp.task('server', function() {
 	if(!opt.process.server) return; 
 
 	if(node) node.kill();
-	node = spawn('node', ['./index.js'], {stdio: 'inherit'});
+	node = spawn('node', [paths.server.execute], {stdio: 'inherit'});
 
 	node.on('close', function(code) {
 		if(code === 8) {
@@ -106,7 +106,7 @@ gulp.task('imagewatch', function() {
 gulp.task('default', ['server', 'watch'], function(){
 	// Start the server, if a change is detected restart it
 	if(opt.watch.server) {
-		gulp.watch(paths.server, ['server']);
+		gulp.watch(paths.server.listen, ['server']);
 	}
 });
 
@@ -165,9 +165,9 @@ function cssTask(event, path) {
 function cssConcat() {
 	if(!opt.task.css.concat) return;
 
-	return gulp.src(paths.style.build)
-		.pipe(concat('main.css'))
-		.pipe(gulp.dest('./css/'));
+	return gulp.src(paths.style.src)
+		.pipe(concat(paths.style.dest.file))
+		.pipe(gulp.dest(paths.style.dest.dir));
 }
 
 function svg2pngTask(event, svgFile) {
@@ -177,7 +177,7 @@ function svg2pngTask(event, svgFile) {
 			svgSvgToPng(svgFile);
 		break;
 		case 'unlink':
-			fs.unlink(svgFile.replace('.svg','.png'));
+			fs.unlink(svgFile.replace('.svg', '.png'));
 		break;
 	}
 }

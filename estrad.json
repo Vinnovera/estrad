@@ -28,14 +28,20 @@
 			"minify": true
 		} 
 		},
+	"server": {
+		"port": 8080
+		},
 	"paths": {
-		"server": [
-			"./index.js", 
-			"./lib/**/*.js", 
-			"routes.json"
+		"server": {
+			"listen": [
+				"./index.js", 
+				"./lib/**/*.js", 
+				"routes.json"
 			],
+			"execute": "./index.js"
+			},
 		"style": {
-			"build": [
+			"src": [
 				"./css/**/*.css", 
 				"./modules/**/*.css", 
 				"!css/main.css"
@@ -43,14 +49,13 @@
 			"listen": [
 				"modules/**/*.css", 
 				"css/**/*.css"
-			]
+			],
+			"dest": {
+				"file": "main.css",
+				"dir": "./css/"
+			}
 			},
 		"script": {
-			"build": [
-				"./js/**/*.js", 
-				"./modules/**/*.js", 
-				"!js/main.js"
-			],
 			"listen": [
 				"js/**/*.js", 
 				"modules/**/*.js", 
