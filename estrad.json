@@ -29,7 +29,8 @@
 		} 
 		},
 	"server": {
-		"port": 8080,
+		"proxy": true,
+		"port":  8080,
 		"template": {
 			"folder": "modules",
 			"templateSettings": {}
@@ -41,8 +42,7 @@
 				"./index.js", 
 				"./lib/**/*.js", 
 				"routes.json"
-			],
-			"execute": "./index.js"
+			]
 			},
 		"style": {
 			"src": [

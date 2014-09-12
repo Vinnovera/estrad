@@ -7,20 +7,26 @@
 		app = express(),
 		proxy = require("./lib/proxy"),
 		partials = require("estrad-template"),
+		extend = require("extend"),
 		fs = require("fs"),
-		opt = JSON.parse(fs.readFileSync('./estrad.json')),
-		port = opt.server.port;
+		defaultOpt = JSON.parse(fs.readFileSync('./estrad.json')),
+		optExists = fs.existsSync(process.cwd() + '/estrad.json'),
+		opt = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
+		options = extend(defaultOpt, opt), 
+		port = options.server.port;
 
 	/**
 	 * Handle proxy requests
 	 */
-	app.use(function(req, res, next) {
-		proxy.getProxyUrl(req, function(err, proxyUrl) {
-			if(err) return next();
+	if(options.server.proxy) {
+		app.use(function(req, res, next) {
+			proxy.getProxyUrl(req, function(err, proxyUrl) {
+				if(err) return next();
 
-			proxy.web(req, res, {target: proxyUrl});
+				proxy.web(req, res, {target: proxyUrl});
+			});
 		});
-	});
+	}
 
 	/**
 	 * Handle requests for HTML files
@@ -58,7 +64,7 @@
 
 			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, opt.server.template, function(err, content) {
+			partials(pathname, options.server.template, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();

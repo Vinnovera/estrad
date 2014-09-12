@@ -18,21 +18,25 @@ var
 	chokidar = require('glob-chokidar'),
 	chalk = require('chalk'),
 	path = require("path"),
+	extend = require("extend"),
 	// 'child_process.spawn() that works with windows'
 	spawn = require('win-spawn'),
 	fs = require('fs'),
-	jshintRc = JSON.parse(fs.readFileSync('./.jshintrc', 'utf-8')),
-	pkg = JSON.parse(fs.readFileSync('./package.json')),
-	opt = JSON.parse(fs.readFileSync('./estrad.json')),
-	paths = opt.paths,
+	jRcExists = fs.existsSync(process.cwd() + '/.jshintrc'),
+	jshintRc = (jRcExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/.jshintrc', 'utf-8')) : JSON.parse(fs.readFileSync('./.jshintrc', 'utf-8')),
+	defaultOpt = JSON.parse(fs.readFileSync('./estrad.json')),
+	optExists = fs.existsSync(process.cwd() + '/estrad.json'),
+	opt = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
+	options = extend(defaultOpt, opt), 
+	paths = options.paths,
 	node, compass, jstimeout, csstimeout;
 
 // https://gist.github.com/webdesserts/5632955
 gulp.task('server', function() {
-	if(!opt.process.server) return; 
+	if(!options.process.server) return; 
 
 	if(node) node.kill();
-	node = spawn('node', [paths.server.execute], {stdio: 'inherit'});
+	node = spawn('node', ['./index.js'], {stdio: 'inherit'});
 
 	node.on('close', function(code) {
 		if(code === 8) {
@@ -50,7 +54,7 @@ gulp.task('buildhtml', function() {
 	var 
 		srcPaths = paths.build.src;
 
-	if(!opt.build.html) return;
+	if(!options.build.html) return;
 
 	srcPaths.push('!' + paths.build.dest + '/**/*.html');
 
@@ -62,7 +66,7 @@ gulp.task('buildhtml', function() {
 });
 
 gulp.task('compasscompile', function() {
-	if(!opt.build.compass) return;
+	if(!options.build.compass) return;
 
 	spawn('compass', ['compile'], {stdio: 'inherit'});
 });
@@ -73,46 +77,46 @@ gulp.task('compasscompile', function() {
 gulp.task('watch', ['jswatch', 'svgwatch', 'imagewatch', 'csswatch', 'compasswatch']);
 
 gulp.task('jswatch', function() {
-	if(!opt.watch.js) return;
+	if(!options.watch.js) return;
 
 	startWatcher(paths.script.listen, jsTask);
 });
 
 gulp.task('csswatch', function() {
-	if(!opt.watch.css) return; 
+	if(!options.watch.css) return; 
 
 	startWatcher(paths.style.listen, cssTask);
 });
 
 gulp.task('compasswatch', function() {
-	if(!opt.process.compass) return; 
+	if(!options.process.compass) return; 
 
 	if(compass) compass.kill();
 	compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 });
 
 gulp.task('svgwatch', function() {
-	if(!opt.watch.svg) return;
+	if(!options.watch.svg) return;
 
 	startWatcher(paths.svg2png.listen, svg2pngTask);
 });
 
 gulp.task('imagewatch', function() {
-	if(!opt.watch.images) return;
+	if(!options.watch.images) return;
 
 	startWatcher(paths.image.listen, imageTask);
 });
 
 gulp.task('default', ['server', 'watch'], function(){
 	// Start the server, if a change is detected restart it
-	if(opt.watch.server) {
+	if(options.watch.server) {
 		gulp.watch(paths.server.listen, ['server']);
 	}
 });
 
 function startWatcher(paths, callback) {
 	chokidar(paths, function(ev, path) {
-		console.log("[" + chalk.green(pkg.name) + "] File event " + chalk.cyan(ev) + ": " + chalk.magenta(path));
+		console.log("[estrad] File event " + chalk.cyan(ev) + ": " + chalk.magenta(path));
 
 		callback(ev, path);
 	});
@@ -139,7 +143,7 @@ function jsTask(event, path) {
 }
 
 function jsLint(path) {
-	if(!opt.task.js.jshint) return;
+	if(!options.task.js.jshint) return;
 
 	return gulp.src(path)
 		.pipe(jshint(jshintRc))
@@ -163,7 +167,7 @@ function cssTask(event, path) {
 }
 
 function cssConcat() {
-	if(!opt.task.css.concat) return;
+	if(!options.task.css.concat) return;
 
 	return gulp.src(paths.style.src)
 		.pipe(concat(paths.style.dest.file))
@@ -183,7 +187,7 @@ function svg2pngTask(event, svgFile) {
 }
 
 function svgSvgToPng(svgFile) {
-	if(!opt.task.svg.svg2png) return;
+	if(!options.task.svg.svg2png) return;
 
 	return gulp.src(svgFile)
 		.pipe(svg2png())
@@ -200,7 +204,7 @@ function imageTask(event, imageFile) {
 }
 
 function imageMin(imageFile) {
-	if(!opt.task.image.minify) return;
+	if(!options.task.image.minify) return;
 
 	return gulp.src(imageFile)
 		.pipe(imagemin({
