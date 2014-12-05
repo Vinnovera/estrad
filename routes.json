@@ -1,3 +1,4 @@
 {
-	"/that/very/cool/json": "/routes.json"
+	"/that/very/cool/json": "/routes.json",
+	"/override/query": "/always/with?this=query"
 }

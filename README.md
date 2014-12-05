@@ -1,63 +1,81 @@
 Estrad
 ======
 
-This is a tool to make building modular HTML/CSS/JS websites and apps easier.
-
-It allows you to keep all of a modules code together. To more easily find all the relevant code and to keep the code more structured.
+This is a tool to make building modular HTML/CSS/JS websites easier.
 
 ## Install
-To install Estrad´s dependencies, open a termial window and type:
-	
-	npm install
 
-Estrad also uses [Gulp][0] which needs to be installed globally, to install it run the command:
+Estrad requires node.js, install it if you have not already.
 
-	npm install gulp -g
-	
-## Build and start server
-To build your project and to start a node server to view it you can simply type:
+To get Estrad, open a terminal window type:
 
-	gulp
-	
-Gulp will build any CSS and JS files and start a server at port `8080`, the port number can be changed in `index.js`. Gulp will then continuisly listen for file changes and new files to rebuild the scripts.
+```bash
+$ git clone https://github.com/Vinnovera/estrad
+```
+
+Install dependencies:
+
+```bash
+$ cd estrad
+$ npm install
+```
+
+Estrad uses [Gulp][0] which needs to be installed globally:
+
+```bash
+$ npm install gulp -g
+```
+
+## Watching files
+
+Start the file watcher with:
+
+```bash
+$ gulp
+```
+
+Gulp is set up to continously bild your files as changes are made.
+
+`html` files will not be built, rather an Express server will start on `localhost:8080` to serve `html`.
+
+[JSHint][1] is included to lint `js` files. JSHint options can be changed in the `.jshintrc` file.
+
+## Build files
+
+To build the project files type:
+
+```bash
+$ gulp build
+```
+
+This will build any `css`, `js` and `html` files.
 
 ## Write a module
-Estrad uses a slightly modified version of [doT][2] to build the html files. Use the `it` namespace to access properties set in the `json` file and `part` to include another module.
 
 First you need a page, see `index.html` for an example. It looks like this:
 
-	{{=part.header}}
-	{{=part.example}}
-	{{=part.footer}}
+	{=part.header}
+	{=part.example}
+	{=part.footer}
 
-If you open it in the browser right now that's what it will look like too. `header`, `example` and `footer` are names of modules that the server will look for and interpolate in its place. The default name of the modules subdirectory is `modules/`.
+Only the `example` module is set. To add a common header and footer add the files `/modules/header/header.html` and `/modules/footer/footer.html`.
 
 The structure of a module looks like this:
 
-	/example/template.html
+	/example/example.html
 	/example/example.json
 	/example/alternative.json	
 	/example/example.css
 	/example/example.js
-	
-To use the `alternative.json` file include the module as `{{=part.example.alternative}}`.
 
-Every CSS and JS file under `/modules/` and in the `/css/` respectively `/js/` direcoriess will be concatinated to a `main.js` and `main.css` file.
-This behaviour can be changed in the `Gulpfile.js`.
+To use the `alternative.json` file include the module as `{=part.example.alternative}`.
 
-The [JSHint][1] options can, and should, be changed using the `.jshintrc` file.
-
-### Build command
-To buld the files without starting a server or watcher you type:
-
-	gulp build
-
-This will build, in addition to `css` and `js`, your `html` templates and output it to the folder `./html`.
+Estrad uses [doT][2] to for including mock data. Use the `it` namespace to access properties set in the `json` files. Only data from that modules `json` file will be used, and is not shared accross modules.
 
 ## Reverse proxy
 Estrad has reverse proxy functionality. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
 
-Any query parameters you add to the local request will be added to the proxy request. If you have added query parameters to the routed url in `routes.json` any local query parameters will replace them.
+The proxy will pass on any queries, but they can also be overridden in the `routes.json` file.
 
 [0]: https://github.com/gulpjs/gulp
 [1]: https://github.com/jshint/jshint/
