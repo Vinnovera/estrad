@@ -30,7 +30,7 @@ module.exports = function (gulp, options) {
 	});
 
 	/* CSS */
-	function cssTask(event, path) {
+	function cssTask(event) {
 		switch(event) {
 			case 'add':
 				clearTimeout(csstimeout);

@@ -2,6 +2,7 @@ module.exports = function (gulp, options) {
 	"use strict";
 
 	var
+		fs = require("fs"),
 		svg2png  = require('gulp-svg2png'),
 		imagemin = require('gulp-imagemin'),
 		optipng  = require('imagemin-optipng'),
