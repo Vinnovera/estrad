@@ -16,8 +16,6 @@ module.exports = function(gulp) {
 	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);
 
-	if(!gulp) gulp = require('gulp');
-
 	/**
 	 * Build
 	 */
