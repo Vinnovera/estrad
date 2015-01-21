@@ -5,7 +5,7 @@ module.exports = function (gulp, options) {
 		partials = require('gulp-estrad-template'),
 		paths    = options.paths;
 
-	gulp.task('buildhtml', function() {
+	gulp.task('estrad-buildhtml', function() {
 		var 
 			srcPaths = paths.build.src;
 

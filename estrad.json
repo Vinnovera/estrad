@@ -1,35 +1,35 @@
 {
 	"build": {
-		"html":    true,
+		"html":    false,
 		"compass": false
 		},
 	"watch": {
-		"images": true,
-		"svg":    true,
-		"js":     true,
-		"css":    false,
-		"server": true
+		"images":  false,
+		"svg":     false,
+		"js":      false,
+		"css":     false,
+		"server":  false
 		},
 	"process": {
-		"server":  true,
+		"server":  false,
 		"compass": false
 		},
 	"task": {
 		"js": {
-			"jshint": true
+			"jshint": false
 			},
 		"css": {
-			"concat": true
+			"concat": false
 			},
 		"svg": {
-			"svg2png": true
+			"svg2png": false
 			},
 		"images": {
-			"minify": true
+			"minify": false
 		} 
 		},
 	"server": {
-		"proxy": true,
+		"proxy": false,
 		"port":  8080,
 		"template": {
 			"folder": "modules",
@@ -38,11 +38,7 @@
 		},
 	"paths": {
 		"server": {
-			"listen": [
-				"./index.js", 
-				"./lib/**/*.js", 
-				"routes.json"
-			]
+			"listen": []
 			},
 		"style": {
 			"src": [

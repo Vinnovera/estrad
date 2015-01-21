@@ -1,22 +1,23 @@
 Estrad
 ======
 
-This is a tool to make building modular HTML/CSS/JS websites easier.
+Estrad is a collection of Gulp tasks, and a tool to make building modular HTML/CSS/JS websites easier. 
 
 ## Install
 
 Estrad requires node.js, install it if you have not already.
 
-To get Estrad, open a terminal window type:
+Esdrad is installed as a npm module, though it's not currently published to npm. To install Estrad add it as a dependency to your `package.json` file.
 
-```bash
-$ git clone https://github.com/Vinnovera/estrad
+```json
+devDependencies: {
+	"estrad": "git+https://github.com/Vinnovera/estrad.git#a8d47e92a7de958b44611f88c4778be886d0bd2a"
+}
 ```
 
-Install dependencies:
+and install:
 
 ```bash
-$ cd estrad
 $ npm install
 ```
 
@@ -26,26 +27,127 @@ Estrad uses [Gulp][0] which needs to be installed globally:
 $ npm install gulp -g
 ```
 
-## Watching files
+To use Estrad include it in your `Gulpfile.js` and pass it gulp.
 
-Start the file watcher with:
+```js
+var
+	gulp = require('gulp'),
+	estrad = require('estrad')(gulp);
 
-```bash
-$ gulp
+gulp.task('default', ['estrad']);
 ```
 
-Gulp is set up to continously bild your files as changes are made.
+## Options
+
+As Estrad includes a lot of task, every task is disabled as default. The available options are:
+
+```json
+{
+	"build": {
+		"html":    false,
+		"compass": false
+		},
+	"watch": {
+		"images":  false,
+		"svg":     false,
+		"js":      false,
+		"css":     false,
+		"server":  false
+		},
+	"process": {
+		"server":  false,
+		"compass": false
+		},
+	"task": {
+		"js": {
+			"jshint": false
+			},
+		"css": {
+			"concat": false
+			},
+		"svg": {
+			"svg2png": false
+			},
+		"images": {
+			"minify": false
+		} 
+		},
+	"server": {
+		"proxy": false,
+		"port":  8080,
+		"template": {
+			"folder": "modules",
+			"templateSettings": {}
+		}
+		},
+	"paths": {
+		"server": {
+			"listen": []
+			},
+		"style": {
+			"src": [
+				"./css/**/*.css", 
+				"./modules/**/*.css", 
+				"!css/main.css",
+				"!/node_modules/**/*.js"
+			],
+			"listen": [
+				"modules/**/*.css", 
+				"css/**/*.css"
+			],
+			"dest": {
+				"file": "main.css",
+				"dir":  "./css/"
+			}
+			},
+		"script": {
+			"listen": [
+				"js/**/*.js", 
+				"modules/**/*.js", 
+				"!/node_modules/**/*.js"
+			],
+			"dest": "main.js"
+			},
+		"svg2png": {
+			"listen": [
+				"img/**/*.svg"
+			]
+			},
+		"image": {
+			"listen": [
+				"img/**/*.jpg", 
+				"img/**/*.gif", 
+				"img/**/*.png", 
+				"img/**/*.svg"
+			]
+			},
+		"build": {
+			"src": [
+				"./**/*.html",
+				"!./modules/**/*.html", 
+				"!./node_modules/**/*.html"
+			],
+			"dest": "./package"
+		}
+	}
+}
+```
+
+## Watching files
+
+Estrad is set up to continously bild your files as changes are made.
 
 `html` files will not be built, rather an Express server will start on `localhost:8080` to serve `html`.
 
-[JSHint][1] is included to lint `js` files. JSHint options can be changed in the `.jshintrc` file.
+### JSHint
+[JSHint][1] is included to lint `js` files. To change the ruleset add a `.jshintrc` file.
 
 ## Build files
 
 To build the project files type:
 
 ```bash
-$ gulp build
+$ gulp estrad-build
 ```
 
 This will build any `css`, `js` and `html` files.
@@ -58,7 +160,7 @@ First you need a page, see `index.html` for an example. It looks like this:
 	{=part.example}
 	{=part.footer}
 
-Only the `example` module is set. To add a common header and footer add the files `/modules/header/header.html` and `/modules/footer/footer.html`.
+The example only includes the `example` module. To create the `header` and `footer`modules, add the files `/modules/header/header.html` and `/modules/footer/footer.html`.
 
 The structure of a module looks like this:
 
