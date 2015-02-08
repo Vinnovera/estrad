@@ -5,29 +5,40 @@ module.exports = function (gulp, options) {
 		concat = require('gulp-concat'),
 		stylus = require('gulp-stylus'),
 		nib = require('nib'),
-		// 'child_process.spawn() that works with windows'
+
+		// child_process.spawn() that works with windows
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
 		paths  = options.paths,
 		csstimeout, compass;
 
-	gulp.task('estrad-compasscompile', function() {
-		if(!options.build.compass) return;
+	gulp.task('estrad-css_build', function() {
+		if(!options.build) return;
 
-		spawn('compass', ['compile'], {stdio: 'inherit'});
+		if(!options.preprocessor) {
+			cssConcat();
+
+		} else if(options.preprocessor === "compass") {
+			spawn('compass', ['compile'], {stdio: 'inherit'});
+
+		} else if(options.preprocessor === "stylus") {
+			stylTask();
+		}
 	});
 
-	gulp.task('estrad-csswatch', function() {
-		if(!options.watch.css) return; 
+	gulp.task('estrad-css_watch', function() {
+		if(!options.watch) return;
 
-		helper.startWatcher(paths.style.listen, cssTask);
-	});
+		if(!options.preprocessor) {
+			helper.startWatcher(paths.listen, cssTask);
 
-	gulp.task('estrad-compasswatch', function() {
-		if(!options.process.compass) return; 
+		} else if(options.preprocessor === "compass") {
+			if(compass) compass.kill();
+			compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 
-		if(compass) compass.kill();
-		compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
+		} else if(options.preprocessor === "stylus") {
+			helper.startWatcher(paths.listen, stylTask);
+		}
 	});
 
 	/* CSS */
@@ -47,29 +58,18 @@ module.exports = function (gulp, options) {
 	}
 
 	function cssConcat() {
-		if(!options.task.css.concat) return;
 
-		return gulp.src(paths.style.src)
-			.pipe(concat(paths.style.dest.file))
-			.pipe(gulp.dest(paths.style.dest.dir));
+		return gulp.src(paths.src)
+			.pipe(concat(paths.dest.file))
+			.pipe(gulp.dest(paths.dest.dir));
 	}
 
 	/* Stylus */
-	gulp.task('estrad-stylus', function() {
-		return stylTask();
-	});
-
-	gulp.task('estrad-styluswatch', ['estrad-stylus'], function() {
-		if(!options.watch.styl) return;
-
-		helper.startWatcher(paths.style.listen, stylTask);
-	});
-
 	function stylTask() {
-		return gulp.src(paths.style.src)
+		return gulp.src(paths.src)
 			.pipe(stylus({use: [nib()]})
 			.on('error', stylError))
-			.pipe(gulp.dest(paths.style.dest.dir));
+			.pipe(gulp.dest(paths.dest.dir));
 	}
 
 	function stylError(err) {

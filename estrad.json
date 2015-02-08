@@ -1,90 +1,68 @@
 {
-	"build": {
-		"html":    false,
-		"compass": false
-		},
-	"watch": {
-		"images":  false,
-		"svg":     false,
-		"js":      false,
-		"css":     false,
-		"styl":    false,
-		"server":  false
-		},
-	"process": {
-		"server":  false,
-		"compass": false
-		},
-	"task": {
-		"js": {
-			"jshint": false
-			},
-		"css": {
-			"concat": false
-			},
-		"svg": {
-			"svg2png": false
-			},
-		"images": {
-			"minify": false
-		} 
-		},
-	"server": {
-		"proxy": false,
-		"port":  8080,
-		"template": {
-			"folder": "modules",
-			"templateSettings": {}
-		}
-		},
-	"paths": {
-		"server": {
-			"listen": []
-			},
-		"style": {
-			"src":
-				"./css/**/*.css", 
-				"./modules/**/*.css", 
-				"!css/main.css",
-				"!/node_modules/**/*.js"
-			],
+	"css": {
+		"watch":        true,
+		"build":        false,
+		"preprocessor": false,
+		"paths": {
 			"listen": [
+				"css/**/*.css",
+				"modules/**/*.css",
+				"!css/main.css"
+			],
+			"src": [
+				"css/**/*.css",
 				"modules/**/*.css", 
-				"css/**/*.css"
+				"!css/main.css"
 			],
 			"dest": {
 				"file": "main.css",
-				"dir":  "./css/"
+				"dir": "css/"
 			}
-			},
-		"script": {
-			"listen": [
-				"js/**/*.js", 
-				"modules/**/*.js", 
-				"!/node_modules/**/*.js"
-			],
-			"dest": "main.js"
-			},
-		"svg2png": {
-			"listen": [
-				"img/**/*.svg"
-			]
-			},
-		"image": {
-			"listen": [
-				"img/**/*.jpg", 
-				"img/**/*.gif", 
-				"img/**/*.png", 
-				"img/**/*.svg"
-			]
-			},
-		"build": {
+		}
+	},
+
+	"html": {
+		"build": false,
+		"paths": {
 			"src": [
 				"./**/*.html",
 				"!./modules/**/*.html", 
 				"!./node_modules/**/*.html"
 			],
 			"dest": "./package"
+		}
+	},
+
+	"images": {
+		"watch": true,
+		"paths": {
+			"listen": [
+				"img/**/*.jpg", 
+				"img/**/*.gif", 
+				"img/**/*.png", 
+				"img/**/*.svg"
+			]
+		}
+	},
+
+	"js": {
+		"watch": true,
+		"paths": {
+			"listen": [
+				"js/**/*.js", 
+				"modules/**/*.js", 
+				"!/node_modules/**/*.js"
+			]
+		}
+	},
+
+	"server": {
+		"start": true,
+		"proxy": false,
+		"port":  8080,
+		"template": {
+			"folder": "modules",
+			"templateSettings": {}
 		}
 	}
 }

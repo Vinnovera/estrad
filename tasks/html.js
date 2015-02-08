@@ -5,17 +5,17 @@ module.exports = function (gulp, options) {
 		partials = require('gulp-estrad-template'),
 		paths    = options.paths;
 
-	gulp.task('estrad-buildhtml', function() {
+	gulp.task('estrad-html_build', function() {
 		var 
-			srcPaths = paths.build.src;
+			srcPaths = paths.src;
 
-		if(!options.build.html) return;
+		if(!options.build) return;
 
-		srcPaths.push('!' + paths.build.dest + '/**/*.html');
+		srcPaths.push('!' + paths.dest + '/**/*.html');
 
 		// Build html files
 		return gulp.src(srcPaths)
 			.pipe(partials())
-			.pipe(gulp.dest(paths.build.dest));
+			.pipe(gulp.dest(paths.dest));
 	});
 };

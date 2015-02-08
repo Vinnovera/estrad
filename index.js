@@ -44,7 +44,7 @@
 	 * Accept requests
 	 */
 	app.listen(port);
-	console.log("[" + chalk.green("server") + "] Server started at: " + chalk.magenta("http://localhost:" + port));
+	console.log("[" + chalk.green("estrad-server") + "] Server started at: " + chalk.magenta("http://localhost:" + port));
 
 	/**
 	 * HTML file handler
@@ -62,13 +62,13 @@
 				return;
 			}
 
-			console.log("[" + chalk.green("server") + "] Request: " + chalk.magenta(pathname));
+			console.log("[" + chalk.green("estrad-server") + "] Request: " + chalk.magenta(pathname));
 
 			partials(pathname, options.server.template, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();
-					console.log("[" + chalk.red("server") + "] " + err);
+					console.log("[" + chalk.red("estrad-server") + "] " + err);
 					return;
 				}
 

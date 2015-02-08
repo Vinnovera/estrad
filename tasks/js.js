@@ -11,10 +11,10 @@ module.exports = function (gulp, options) {
 		paths         = options.paths,
 		jstimeout;
 
-	gulp.task('estrad-jswatch', function() {
-		if(!options.watch.js) return;
+	gulp.task('estrad-js_watch', function() {
+		if(!options.watch) return;
 
-		helper.startWatcher(paths.script.listen, jsTask);
+		helper.startWatcher(paths.listen, jsTask);
 	});
 
 	function jsTask(event, path) {
@@ -27,14 +27,13 @@ module.exports = function (gulp, options) {
 			break;
 			case 'change':
 				jsLint(path);
+			break;
 			case 'unlink':
 			break;
 		}
 	}
 
 	function jsLint(path) {
-		if(!options.task.js.jshint) return;
-
 		return gulp.src(path)
 			.pipe(jshint(jshintRc))
 			.pipe(jshint.reporter(jshintStylish));

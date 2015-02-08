@@ -13,49 +13,26 @@ module.exports = function (gulp, options) {
 		helper   = require('../lib/helper'),
 		paths    = options.paths;
 
-	gulp.task('estrad-svgwatch', function() {
-		if(!options.watch.svg) return;
+	gulp.task('estrad-image_watch', function() {
+		if(!options.watch) return;
 
-		helper.startWatcher(paths.svg2png.listen, svg2pngTask);
+		helper.startWatcher(paths.listen, imageTask);
 	});
-
-	gulp.task('estrad-imagewatch', function() {
-		if(!options.watch.images) return;
-
-		helper.startWatcher(paths.image.listen, imageTask);
-	});
-
-	function svg2pngTask(event, svgFile) {
-		switch(event) {
-			case 'add':
-			case 'change':
-				svgSvgToPng(svgFile);
-			break;
-			case 'unlink':
-				fs.unlink(svgFile.replace('.svg', '.png'));
-			break;
-		}
-	}
-
-	function svgSvgToPng(svgFile) {
-		if(!options.task.svg.svg2png) return;
-
-		return gulp.src(svgFile)
-			.pipe(svg2png())
-			.pipe(gulp.dest(path.dirname(svgFile)));
-	}
 
 	function imageTask(event, imageFile) {
 		switch(event) {
 			case 'add':
 			case 'change':
 				imageMin(imageFile);
+				svgToPng(imageFile);
+			break;
+			case 'unlink':
+				unlinkPng(imageFile);
 			break;
 		}
 	}
 
 	function imageMin(imageFile) {
-		if(!options.task.image.minify) return;
 
 		return gulp.src(imageFile)
 			.pipe(imagemin({
@@ -64,5 +41,19 @@ module.exports = function (gulp, options) {
 				use: [optipng(), gifsicle(), jpegtran(), svgo()]
 			}))
 			.pipe(gulp.dest(path.dirname(imageFile)));
+	}
+
+	function svgToPng(filePath) {
+		if(path.extname(filePath) !== '.svg') return;
+
+		return gulp.src(filePath)
+			.pipe(svg2png())
+			.pipe(gulp.dest(path.dirname(filePath)));
+	}
+
+	function unlinkPng(filePath) {
+		if(path.extname(filePath) === '.svg') {
+			fs.unlink(filePath.replace('.svg', '.png'));
+		}
 	}
 };

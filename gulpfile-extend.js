@@ -10,32 +10,26 @@ module.exports = function(gulp) {
 		options    = extend(defaultOpt, opt), 
 		paths      = options.paths;
 
-	require('./tasks/js')(gulp, options);
-	require('./tasks/css')(gulp, options);
-	require('./tasks/server')(gulp, options);
-	require('./tasks/image')(gulp, options);
-	require('./tasks/html')(gulp, options);
+	require('./tasks/js')(gulp, options.js);
+	require('./tasks/css')(gulp, options.css);
+	require('./tasks/server')(gulp, options.server);
+	require('./tasks/image')(gulp, options.images);
+	require('./tasks/html')(gulp, options.html);
 
 	/**
 	 * Build
 	 */
-	gulp.task('estrad-build', ['estrad-buildhtml', 'estrad-compasscompile', 'estrad-stylus']);
+	gulp.task('estrad-build', ['estrad-html_build', 'estrad-css_build']);
 
 	/**
 	 * Watch
 	 */
-	gulp.task('estrad-watch', ['estrad-jswatch', 'estrad-svgwatch', 'estrad-imagewatch', 'estrad-csswatch', 'estrad-compasswatch', 'estrad-styluswatch']);
+	gulp.task('estrad-watch', ['estrad-js_watch', 'estrad-image_watch', 'estrad-css_watch']);
 
 	/**
 	 * Default
 	 */
-	gulp.task('estrad', ['estrad-server', 'estrad-watch'], function() {
-
-		// Start the server, if a change is detected restart it
-		if(options.watch.server) {
-			gulp.watch(paths.server.listen, ['estrad-server']);
-		}
-	});
+	gulp.task('estrad', ['estrad-server', 'estrad-watch']);
 
 	process.on('uncaughtException', function(err) {
 		console.log(err.message);

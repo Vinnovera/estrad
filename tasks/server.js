@@ -7,7 +7,7 @@ module.exports = function (gulp, options) {
 
 	// https://gist.github.com/webdesserts/5632955
 	gulp.task('estrad-server', function() {
-		if(!options.process.server) return; 
+		if(!options.start) return; 
 
 		if(node) node.kill();
 		node = spawn('node', [__dirname + '/../index.js'], {stdio: 'inherit'});
