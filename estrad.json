@@ -1,6 +1,6 @@
 {
 	"css": {
-		"watch":        true,
+		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
 		"paths": {
@@ -34,7 +34,7 @@
 	},
 
 	"images": {
-		"watch": true,
+		"watch": false,
 		"paths": {
 			"listen": [
 				"img/**/*.jpg", 
@@ -46,7 +46,7 @@
 	},
 
 	"js": {
-		"watch": true,
+		"watch": false,
 		"paths": {
 			"listen": [
 				"js/**/*.js", 
@@ -57,7 +57,7 @@
 	},
 
 	"server": {
-		"start": true,
+		"start": false,
 		"proxy": false,
 		"port":  8080,
 		"template": {

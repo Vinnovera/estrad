@@ -32,5 +32,6 @@
 	gulp.task("default", ["watch"]);
 
 	gulp.task("test", ["estrad"]);
+	gulp.task("test-build", ["estrad-build"]);
 
 })();

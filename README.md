@@ -1,24 +1,19 @@
 Estrad
 ======
 
-Estrad is a collection of Gulp tasks, and a tool to make building modular HTML/CSS/JS websites easier. 
+Estrad is a collection of Gulp tasks, and a tool to make building modular HTML/CSS/JS websites easier.
+
+The goal is to have a build process fast enough that you do not have to wait whenever a file is saved. Because of the possible complexity of the HTML templates Estrad will not compile them on file save. Instead a server is included that compiles HTML pages on request.
 
 ## Install
 
 Estrad requires node.js, install it if you have not already.
 
-Esdrad is installed as a npm module, though it's not currently published to npm. To install Estrad add it as a dependency to your `package.json` file.
-
-```json
-devDependencies: {
-	"estrad": "git+https://github.com/Vinnovera/estrad.git#a8d47e92a7de958b44611f88c4778be886d0bd2a"
-}
-```
-
-and install:
+Esdrad is installed as a npm module. It's not currently published to npm, to install Estrad as a dev dependency run:
 
 ```bash
-$ npm install
+$ npm install git+https://github.com/Vinnovera/estrad.git#<latest commit SHA hash> --save-dev
+}
 ```
 
 Estrad uses [Gulp][0] which needs to be installed globally:
@@ -27,7 +22,7 @@ Estrad uses [Gulp][0] which needs to be installed globally:
 $ npm install gulp -g
 ```
 
-To use Estrad include it in your `Gulpfile.js` and pass it gulp.
+Include Estrad in your `Gulpfile.js` and pass it gulp:
 
 ```js
 var
@@ -39,89 +34,35 @@ gulp.task('default', ['estrad']);
 
 ## Options
 
-As Estrad includes a lot of task, every task is disabled as default. The available options are:
+Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json` to set options. The available options are:
 
 ```json
 {
-	"build": {
-		"html":    false,
-		"compass": false
-		},
-	"watch": {
-		"images":  false,
-		"svg":     false,
-		"js":      false,
-		"css":     false,
-		"server":  false
-		},
-	"process": {
-		"server":  false,
-		"compass": false
-		},
-	"task": {
-		"js": {
-			"jshint": false
-			},
-		"css": {
-			"concat": false
-			},
-		"svg": {
-			"svg2png": false
-			},
-		"images": {
-			"minify": false
-		} 
-		},
-	"server": {
-		"proxy": false,
-		"port":  8080,
-		"template": {
-			"folder": "modules",
-			"templateSettings": {}
-		}
-		},
-	"paths": {
-		"server": {
-			"listen": []
-			},
-		"style": {
-			"src": [
-				"./css/**/*.css", 
-				"./modules/**/*.css", 
-				"!css/main.css",
-				"!/node_modules/**/*.js"
-			],
+	"css": {
+		"watch":        false,
+		"build":        false,
+		"preprocessor": false,
+		"paths": {
 			"listen": [
+				"css/**/*.css",
+				"modules/**/*.css",
+				"!css/main.css"
+			],
+			"src": [
+				"css/**/*.css",
 				"modules/**/*.css", 
-				"css/**/*.css"
+				"!css/main.css"
 			],
 			"dest": {
 				"file": "main.css",
-				"dir":  "./css/"
+				"dir": "css/"
 			}
-			},
-		"script": {
-			"listen": [
-				"js/**/*.js", 
-				"modules/**/*.js", 
-				"!/node_modules/**/*.js"
-			],
-			"dest": "main.js"
-			},
-		"svg2png": {
-			"listen": [
-				"img/**/*.svg"
-			]
-			},
-		"image": {
-			"listen": [
-				"img/**/*.jpg", 
-				"img/**/*.gif", 
-				"img/**/*.png", 
-				"img/**/*.svg"
-			]
-			},
-		"build": {
+		}
+	},
+
+	"html": {
+		"build": false,
+		"paths": {
 			"src": [
 				"./**/*.html",
 				"!./modules/**/*.html", 
@@ -129,18 +70,77 @@ As Estrad includes a lot of task, every task is disabled as default. The availab
 			],
 			"dest": "./package"
 		}
+	},
+
+	"images": {
+		"watch": false,
+		"paths": {
+			"listen": [
+				"img/**/*.jpg", 
+				"img/**/*.gif", 
+				"img/**/*.png", 
+				"img/**/*.svg"
+			]
+		}
+	},
+
+	"js": {
+		"watch": false,
+		"paths": {
+			"listen": [
+				"js/**/*.js", 
+				"modules/**/*.js", 
+				"!/node_modules/**/*.js"
+			]
+		}
+	},
+
+	"server": {
+		"start": false,
+		"proxy": false,
+		"port":  8080,
+		"template": {
+			"folder": "modules",
+			"templateSettings": {}
+		}
 	}
 }
 ```
 
+### css
+
+#### preprocessor
+
+Can be:
+
+`false` for no preprocessor.
+
+`"sass"` to use SASS with Compass. Requires that you add `config.rb`.
+
+`"stylus"` to use Stylus with Nib.
+
+### images
+
+Smushes `svg`, `png`, `jpg` and `gif` files. Will also create a `png` from any `svg`.
+
+### js
+At the moment all this does is lint your files with [JSHint][1]. Estrad comes with a basic setup of rules. To change the ruleset add a `.jshintrc` file. 
+
+
+### server
+
+#### template
+
+##### templateSettings
+doT.templateSettings
+
+Set these to avoid running your client templates on the server.
+
 ## Watching files
 
-Estrad is set up to continously bild your files as changes are made.
-
-`html` files will not be built, rather an Express server will start on `localhost:8080` to serve `html`.
-
-### JSHint
-[JSHint][1] is included to lint `js` files. To change the ruleset add a `.jshintrc` file.
+```bash
+$ gulp estrad
+```
 
 ## Build files
 
@@ -152,6 +152,8 @@ $ gulp estrad-build
 
 This will build any `css`, `js` and `html` files.
 
+The idea is that this process will compile a "deliverable" of all front end code. This is a goal for the future.
+
 ## Write a module
 
 First you need a page, see `index.html` for an example. It looks like this:
@@ -160,9 +162,7 @@ First you need a page, see `index.html` for an example. It looks like this:
 	{=part.example}
 	{=part.footer}
 
-The example only includes the `example` module. To create the `header` and `footer`modules, add the files `/modules/header/header.html` and `/modules/footer/footer.html`.
-
-The structure of a module looks like this:
+The structure of a module can look like this:
 
 	/example/example.html
 	/example/example.json
@@ -172,12 +172,15 @@ The structure of a module looks like this:
 
 To use the `alternative.json` file include the module as `{=part.example.alternative}`.
 
-Estrad uses [doT][2] to for including mock data. Use the `it` namespace to access properties set in the `json` files. Only data from that modules `json` file will be used, and is not shared accross modules.
+To create `header` and `footer` modules, add the files `/modules/header/header.html` and `/modules/footer/footer.html`.
+
+### doT
+Estrad uses [doT][2] to for including mock data. Use the `it` namespace to access properties set in the `json` files. The mock data is self-contained and will only affect that module.
 
 ## Reverse proxy
 Estrad has reverse proxy functionality. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
 
-The proxy will pass on any queries, but they can also be overridden in the `routes.json` file.
+Get queries can be overridden in `routes.json`.
 
 [0]: https://github.com/gulpjs/gulp
 [1]: https://github.com/jshint/jshint/

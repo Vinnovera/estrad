@@ -18,7 +18,7 @@ module.exports = function (gulp, options) {
 		if(!options.preprocessor) {
 			cssConcat();
 
-		} else if(options.preprocessor === "compass") {
+		} else if(options.preprocessor === "sass") {
 			spawn('compass', ['compile'], {stdio: 'inherit'});
 
 		} else if(options.preprocessor === "stylus") {
@@ -32,7 +32,7 @@ module.exports = function (gulp, options) {
 		if(!options.preprocessor) {
 			helper.startWatcher(paths.listen, cssTask);
 
-		} else if(options.preprocessor === "compass") {
+		} else if(options.preprocessor === "sass") {
 			if(compass) compass.kill();
 			compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 
