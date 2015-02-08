@@ -3,20 +3,19 @@ Estrad
 
 Estrad is a collection of Gulp tasks, and a tool to make building modular HTML/CSS/JS websites easier.
 
-The goal is to have a build process fast enough that you do not have to wait whenever a file is saved. Because of the possible complexity of the HTML templates Estrad will not compile them on file save. Instead a server is included that compiles HTML pages on request.
+The goal is to have a build process fast enough that you do not have to wait whenever a file is saved. Because of the possible complexity of HTML templates Estrad will not compile them on file save. Instead a server is included that compiles HTML pages on request.
 
 ## Install
 
 Estrad requires node.js, install it if you have not already.
 
-Esdrad is installed as a npm module. It's not currently published to npm, to install Estrad as a dev dependency run:
+Estrad is installed as a npm module. It's not currently published to npm, to install Estrad as a dev dependency run:
 
 ```bash
 $ npm install git+https://github.com/Vinnovera/estrad.git#<latest commit SHA hash> --save-dev
-}
 ```
 
-Estrad uses [Gulp][0] which needs to be installed globally:
+[Gulp][0] needs to be installed globally:
 
 ```bash
 $ npm install gulp -g
@@ -178,7 +177,7 @@ To create `header` and `footer` modules, add the files `/modules/header/header.h
 Estrad uses [doT][2] to for including mock data. Use the `it` namespace to access properties set in the `json` files. The mock data is self-contained and will only affect that module.
 
 ## Reverse proxy
-Estrad has reverse proxy functionality. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
+Estrad includes a reverse proxy. To set up a path add it to `routes.json`. This can be a local resourse or cross domain.
 
 Get queries can be overridden in `routes.json`.
 
