@@ -15,6 +15,8 @@
 			}
 		};
 
+	require("./gulpfile-extend")(gulp);
+
 	gulp.task("jswatch", function() {
 		chokidar(paths.js.listen, function(ev, path) {
 			console.log("[" + chalk.green("glob-chokidar") + "] File event '" + chalk.cyan(ev) + "' in file: " + chalk.magenta(path));
@@ -28,5 +30,7 @@
 	gulp.task("watch", ["jswatch"]);
 
 	gulp.task("default", ["watch"]);
+
+	gulp.task("test", ["estrad"]);
 
 })();

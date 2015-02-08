@@ -8,6 +8,7 @@
 		"svg":     false,
 		"js":      false,
 		"css":     false,
+		"styl":    false,
 		"server":  false
 		},
 	"process": {
@@ -41,7 +42,7 @@
 			"listen": []
 			},
 		"style": {
-			"src": [
+			"src":
 				"./css/**/*.css", 
 				"./modules/**/*.css", 
 				"!css/main.css",

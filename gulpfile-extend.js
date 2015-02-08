@@ -19,12 +19,12 @@ module.exports = function(gulp) {
 	/**
 	 * Build
 	 */
-	gulp.task('estrad-build', ['estrad-buildhtml', 'estrad-compasscompile']);
+	gulp.task('estrad-build', ['estrad-buildhtml', 'estrad-compasscompile', 'estrad-stylus']);
 
 	/**
 	 * Watch
 	 */
-	gulp.task('estrad-watch', ['estrad-jswatch', 'estrad-svgwatch', 'estrad-imagewatch', 'estrad-csswatch', 'estrad-compasswatch']);
+	gulp.task('estrad-watch', ['estrad-jswatch', 'estrad-svgwatch', 'estrad-imagewatch', 'estrad-csswatch', 'estrad-compasswatch', 'estrad-styluswatch']);
 
 	/**
 	 * Default
