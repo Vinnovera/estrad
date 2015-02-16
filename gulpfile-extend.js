@@ -9,7 +9,7 @@ module.exports = function(gulp) {
 		opt        = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
 		options    = extend(defaultOpt, opt);
 
-	require('./tasks/js')(gulp, options.js);
+	require('./tasks/js')(gulp, options);
 	require('./tasks/css')(gulp, options.css);
 	require('./tasks/server')(gulp, options.server);
 	require('./tasks/image')(gulp, options.images);

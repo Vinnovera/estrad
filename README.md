@@ -102,11 +102,10 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"start": false,
 		"proxy": false,
 		"port":  8080,
-		"template": {
-			"folder": "modules",
-			"templateSettings": {}
-		}
-	}
+		"templateSettings": {}
+	},
+
+	"modulesDir": "modules"
 }
 ```
 

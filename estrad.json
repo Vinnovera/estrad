@@ -64,9 +64,8 @@
 		"start": false,
 		"proxy": false,
 		"port":  8080,
-		"template": {
-			"folder": "modules",
-			"templateSettings": {}
-		}
-	}
+		"templateSettings": {}
+	},
+
+	"modulesDir": "modules"
 }
