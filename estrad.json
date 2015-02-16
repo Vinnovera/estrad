@@ -16,7 +16,7 @@
 			],
 			"dest": {
 				"file": "main.css",
-				"dir": "css/"
+				"dir": "package/css/"
 			}
 		}
 	},
@@ -47,12 +47,16 @@
 
 	"js": {
 		"watch": false,
+		"build": false,
 		"paths": {
+			"require": "js/vendor/require.js",
 			"listen": [
 				"js/**/*.js", 
 				"modules/**/*.js", 
 				"!/node_modules/**/*.js"
-			]
+			],
+			"src":  "js/main.js",
+			"dest": "package/js/main.js"
 		}
 	},
 

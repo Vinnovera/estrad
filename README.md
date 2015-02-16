@@ -85,12 +85,16 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 
 	"js": {
 		"watch": false,
+		"build": false,
 		"paths": {
+			"require": "js/vendor/require.js",
 			"listen": [
 				"js/**/*.js", 
 				"modules/**/*.js", 
 				"!/node_modules/**/*.js"
-			]
+			],
+			"src":  "js/main.js",
+			"dest": "package/js/main.js"
 		}
 	},
 
@@ -123,8 +127,12 @@ Can be:
 Smushes `svg`, `png`, `jpg` and `gif` files. Will also create a `png` from any `svg`.
 
 ### js
+
+#### watch
 At the moment all this does is lint your files with [JSHint][1]. Estrad comes with a basic setup of rules. To change the ruleset add a `.jshintrc` file. 
 
+#### build
+Require.js optimization tool [r.js][3].
 
 ### server
 
@@ -184,3 +192,4 @@ Get queries can be overridden in `routes.json`.
 [0]: https://github.com/gulpjs/gulp
 [1]: https://github.com/jshint/jshint/
 [2]: http://olado.github.io/doT/index.html
+[3]: http://requirejs.org/docs/optimization.html
