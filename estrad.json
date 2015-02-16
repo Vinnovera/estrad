@@ -46,8 +46,8 @@
 	},
 
 	"js": {
-		"watch": false,
-		"build": false,
+		"watch": true,
+		"build": true,
 		"paths": {
 			"require": "js/vendor/require.js",
 			"listen": [
@@ -61,7 +61,7 @@
 	},
 
 	"server": {
-		"start": false,
+		"start": true,
 		"proxy": false,
 		"port":  8080,
 		"templateSettings": {}

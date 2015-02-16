@@ -11,7 +11,8 @@ module.exports = function (gulp, options) {
 		helper        = require('../lib/helper'),
 		path          = require('path'),
 		dir           = require('node-dir'),
-		chalk         = require('chalk'),
+		extend        = require('extend'),
+		toSource      = require('tosource'),
 		paths         = options.js.paths,
 		jstimeout;
 
@@ -27,17 +28,33 @@ module.exports = function (gulp, options) {
 
 		if(!options.js.build) return;
 
-		rjs({
-			baseUrl: './' + path.dirname(paths.src),
-			out: path.basename(paths.dest),
-			name: path.basename(paths.src, '.js'),
-			mainConfigFile: paths.src,
-			paths: {
-				requireLib: path.relative(path.dirname(paths.src), path.dirname(paths.require)) + '/' + path.basename(paths.require, '.js')
-			},
-			include: 'requireLib'
-		})
-			.pipe(gulp.dest(path.dirname(paths.dest)));
+		requireJSpaths(function(){
+			helper.readContentIfExists('/' + paths.src, function(err, data) {
+				if(err) throw err;
+
+				helper.readContentIfExists('/' + path.dirname(paths.src) + '/modulesPaths.js', function(err, modulesPathsData) {
+					if(err) throw err;
+
+					helper.writeFile('/.estrad/main.js', mergeFilePaths(data, modulesPathsData), function() {
+
+						console.log(path.relative(path.dirname(paths.src), path.dirname('./.estrad/main.js')) + '/' + path.basename('./.estrad/main.js', '.js'));
+
+						rjs({
+							baseUrl: './' + path.dirname(paths.src),
+							out: path.basename(paths.dest),
+							name: path.basename(paths.src, '.js'),
+							mainConfigFile: './.estrad/main.js',
+							paths: {
+								requireLib: path.relative(path.dirname(paths.src), path.dirname(paths.require)) + '/' + path.basename(paths.require, '.js')
+							},
+							include: 'requireLib'
+						})
+							.pipe(gulp.dest(path.dirname(paths.dest)));
+
+					});
+				});
+			});
+		});
 	});
 
 	function jsTask(event, path) {
@@ -64,7 +81,7 @@ module.exports = function (gulp, options) {
 			.pipe(jshint.reporter(jshintStylish));
 	}
 
-	function requireJSpaths() {
+	function requireJSpaths(callback) {
 		dir.files(process.cwd() + '/' + options.modulesDir, function(err, files) {
 			var
 				requirePaths = {},
@@ -80,13 +97,39 @@ module.exports = function (gulp, options) {
 					requirePaths[path.basename(item, '.js')] = path.relative(path.dirname(paths.src), path.dirname(item)) + '/' + path.basename(item, '.js')
 				});
 
-			fileContent = 'require.config({paths:' + JSON.stringify(requirePaths) + '});'
+			fileContent = 'require.config( { paths:' + JSON.stringify(requirePaths) + '});'
 
-			fs.writeFile(process.cwd() + '/' + path.dirname(paths.src) + '/modulesPaths.js', fileContent, function(err) {
-				if(err) throw err;
-
-				console.log("["+ chalk.green("estrad") + "] Saving: " + chalk.magenta(path.dirname(paths.src) + '/modulesPaths.js'));
-			});
+			helper.writeFile('/' + path.dirname(paths.src) + '/modulesPaths.js', fileContent, callback);
 		});
+	}
+
+	function mergeFilePaths(file1, file2) {
+		var
+			rex = /require.config\(([\s\S]+?)\)/i,
+			match = rex.exec(file1),
+			obj1 = {},
+			obj2 = {},
+			result;
+
+		if(match) {
+			obj1 = eval('(' + match[1] + ')');
+		}
+
+		match = rex.exec(file2)
+		// The second file, if it at all exists, should be guaratneed to have a match
+		if(match) {
+			obj2 = eval('(' + match[1] + ')');
+		}
+
+		if('paths' in obj1 && 'paths' in obj2) {
+			obj1.paths = extend(obj1.paths, obj2.paths);
+
+			result = file1.replace(rex, 'require.config(' + toSource(obj1) + ');');
+
+			console.log(result);
+			return result;
+		}
+
+		return file1;
 	}
 };
