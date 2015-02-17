@@ -3,7 +3,8 @@ module.exports = function(gulp) {
 
 	var
 		fs         = require('fs'),
-		extend     = require("extend"),
+		extend     = require('extend'),
+		helper     = require('./lib/helper'),
 		defaultOpt = JSON.parse(fs.readFileSync(__dirname + '/estrad.json')),
 		optExists  = fs.existsSync(process.cwd() + '/estrad.json'),
 		opt        = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
@@ -18,7 +19,9 @@ module.exports = function(gulp) {
 	/**
 	 * Build
 	 */
-	gulp.task('estrad-build', ['estrad-html_build', 'estrad-css_build', 'estrad-js_build']);
+	gulp.task('estrad-build', ['estrad-html_build', 'estrad-css_build', 'estrad-js_build'], function() {
+		helper.removeFolder('/.estrad');
+	});
 
 	/**
 	 * Watch
