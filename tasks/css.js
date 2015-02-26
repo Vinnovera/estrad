@@ -4,12 +4,14 @@ module.exports = function (gulp, options) {
 	var
 		concat = require('gulp-concat'),
 		stylus = require('gulp-stylus'),
-		nib = require('nib'),
+		nib    = require('nib'),
+		extend = require('extend'),
 
 		// child_process.spawn() that works with windows
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
 		paths  = options.paths,
+		stylO  = extend({use: [nib()]}, options.settings),
 		csstimeout, compass;
 
 	gulp.task('estrad-css_build', function() {
@@ -67,7 +69,7 @@ module.exports = function (gulp, options) {
 	/* Stylus */
 	function stylTask() {
 		return gulp.src(paths.src)
-			.pipe(stylus({use: [nib()]})
+			.pipe(stylus(stylO)
 			.on('error', stylError))
 			.pipe(gulp.dest(paths.dest.dir));
 	}

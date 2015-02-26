@@ -3,6 +3,7 @@
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
+		"settings": {},
 		"paths": {
 			"listen": [
 				"css/**/*.css",
