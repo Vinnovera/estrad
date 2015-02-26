@@ -2,13 +2,8 @@ module.exports = function(gulp) {
 	"use strict";
 
 	var
-		fs         = require('fs'),
-		extend     = require('extend'),
 		helper     = require('./lib/helper'),
-		defaultOpt = JSON.parse(fs.readFileSync(__dirname + '/estrad.json')),
-		optExists  = fs.existsSync(process.cwd() + '/estrad.json'),
-		opt        = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
-		options    = extend(defaultOpt, opt);
+		options    = helper.getEstradOptions();
 
 	require('./tasks/js')(gulp, options);
 	require('./tasks/css')(gulp, options.css);

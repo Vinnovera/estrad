@@ -8,12 +8,8 @@
 		proxy = require("./lib/proxy"),
 		helper = require('./lib/helper'),
 		partials = require("estrad-template"),
-		extend = require("extend"),
 		fs = require("fs"),
-		defaultOpt = JSON.parse(fs.readFileSync('./estrad.json')),
-		optExists = fs.existsSync(process.cwd() + '/estrad.json'),
-		opt = (optExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/estrad.json')) : {}, 
-		options = extend(defaultOpt, opt), 
+		options = helper.getEstradOptions(), 
 		port = options.server.port;
 
 	/**
