@@ -41,6 +41,7 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
+		"settings":     {},
 		"paths": {
 			"listen": [
 				"css/**/*.css",
@@ -121,6 +122,21 @@ Can be:
 
 `"stylus"` to use Stylus with Nib.
 
+#### settings
+Stylus settings object. Values here will be passed to [gulp-stylus][4]. 
+
+Example:
+
+```json
+{
+	"compress": true,
+	"linenos": true,
+	"url": "url"
+}
+```
+
+The `url` option will base64 images and inline them in the css file.
+
 ### images
 
 Smushes `svg`, `png`, `jpg` and `gif` files. Will also create a `png` from any `svg`.
@@ -192,3 +208,4 @@ Get queries can be overridden in `routes.json`.
 [1]: https://github.com/jshint/jshint/
 [2]: http://olado.github.io/doT/index.html
 [3]: http://requirejs.org/docs/optimization.html
+[4]: https://github.com/stevelacy/gulp-stylus
