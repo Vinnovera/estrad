@@ -63,7 +63,7 @@
 	/**
 	 * Handle requests for static files
 	 */
-	app.use(express.static(__dirname + '/'));
+	app.use(express.static(process.cwd() + '/'));
 
 	/**
 	 * Accept requests
