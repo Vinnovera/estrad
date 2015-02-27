@@ -1,19 +1,16 @@
 {
+	"sourceDir": "/",
 	"css": {
-		"watch":        false,
+		"watch":        true,
 		"build":        false,
-		"preprocessor": false,
+		"preprocessor": "stylus",
 		"settings": {},
 		"paths": {
 			"listen": [
-				"css/**/*.css",
-				"modules/**/*.css",
-				"!css/main.css"
+				"styl/**/*.styl"
 			],
 			"src": [
-				"css/**/*.css",
-				"modules/**/*.css", 
-				"!css/main.css"
+				"styl/*.styl"
 			],
 			"dest": {
 				"file": "main.css",
@@ -47,7 +44,7 @@
 	},
 
 	"js": {
-		"watch": true,
+		"watch": false,
 		"build": true,
 		"paths": {
 			"require": "js/vendor/require.js",
@@ -62,7 +59,7 @@
 	},
 
 	"server": {
-		"start": true,
+		"start": false,
 		"proxy": false,
 		"port":  8080,
 		"templateSettings": {}

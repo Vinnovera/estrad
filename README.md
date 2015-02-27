@@ -37,6 +37,7 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 
 ```json
 {
+	"sourceDir": "/",
 	"css": {
 		"watch":        false,
 		"build":        false,
@@ -109,6 +110,9 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 	"modulesDir": "modules"
 }
 ```
+
+### sourceDir
+Directory of source files. 
 
 ### css
 

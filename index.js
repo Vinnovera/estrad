@@ -59,7 +59,7 @@
 	/**
 	 * Handle requests for static files
 	 */
-	app.use(express.static(process.cwd() + '/'));
+	app.use(express.static(process.cwd() + options.sourceDir + '/'));
 
 	/**
 	 * Accept requests
