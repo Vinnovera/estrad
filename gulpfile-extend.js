@@ -9,7 +9,7 @@ module.exports = function(gulp) {
 	require('./tasks/css')(gulp, options.css);
 	require('./tasks/server')(gulp, options.server);
 	require('./tasks/image')(gulp, options.images);
-	require('./tasks/html')(gulp, options.html);
+	require('./tasks/html')(gulp, options);
 
 	/**
 	 * Build

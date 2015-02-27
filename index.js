@@ -85,7 +85,7 @@
 
 			console.log("[" + chalk.green("estrad-server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, options.server.template, function(err, content) {
+			partials(pathname, { folder: options.modulesDir }, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();

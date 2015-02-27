@@ -38,6 +38,8 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 ```json
 {
 	"sourceDir": "/",
+	"modulesDir": "modules",
+
 	"css": {
 		"watch":        false,
 		"build":        false,
@@ -106,13 +108,14 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"port":  8080,
 		"templateSettings": {}
 	},
-
-	"modulesDir": "modules"
 }
 ```
 
 ### sourceDir
 Directory of source files. 
+
+### modulesDir
+Directory of html partials.
 
 ### css
 
