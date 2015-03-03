@@ -21,6 +21,11 @@
 
 	"html": {
 		"build": false,
+		"prettify": {
+			"indent_size": 1,
+			"indent_char": "\t",
+			"preserve_newlines": false
+		},
 		"paths": {
 			"src": [
 				"./**/*.html",

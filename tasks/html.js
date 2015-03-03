@@ -2,7 +2,9 @@ module.exports = function (gulp, options) {
 	"use strict";
 
 	var
+		gulpif   = require('gulp-if'),
 		partials = require('gulp-estrad-template'),
+		prettify = require('gulp-prettify'),
 		rename   = require('gulp-rename'),
 		paths    = options.html.paths;
 
@@ -28,6 +30,7 @@ module.exports = function (gulp, options) {
 					path.dirname = path.dirname.replace(sourceDir, '');
 				}
 			}))
+			.pipe(gulpif(options.html.prettify, prettify(options.html.prettify)))
 			.pipe(gulp.dest(paths.dest));
 	});
 };
