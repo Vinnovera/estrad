@@ -38,6 +38,8 @@
 
 	"images": {
 		"watch": false,
+		"build": false,
+		"svgToPng": false,
 		"paths": {
 			"listen": [
 				"img/**/*.jpg", 
@@ -45,6 +47,7 @@
 				"img/**/*.png", 
 				"img/**/*.svg"
 			]
+			"dest": "./styl"
 		}
 	},
 
