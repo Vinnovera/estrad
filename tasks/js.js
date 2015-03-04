@@ -25,7 +25,7 @@ module.exports = function (gulp, options) {
 		requireConfigPaths();
 	});
 
-	gulp.task('estrad-js_build', function(cb) {
+	gulp.task('estrad-js_build', ['estrad-clean_build'], function(cb) {
 
 		if(!options.js.build) return cb(null);
 

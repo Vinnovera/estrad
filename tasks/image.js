@@ -19,7 +19,7 @@ module.exports = function (gulp, options) {
 		helper.startWatcher(paths.listen, imageTask);
 	});
 
-	gulp.task('estrad-image_build', function() {
+	gulp.task('estrad-image_build', ['estrad-clean_build'], function() {
 		if(!options.images.build) return;
 
 		return imageMin();

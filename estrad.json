@@ -74,4 +74,13 @@
 	},
 
 	"modulesDir": "modules"
+	"static": {
+		"build": false,
+		"paths": {
+			"from": [],
+			"to": "./package"
+		}
+	},
+
+	"modulesDir": "src/modules"
 }

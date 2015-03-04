@@ -10,16 +10,16 @@ module.exports = function(gulp) {
 	require('./tasks/server')(gulp, options.server);
 	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);
+	require('./tasks/static')(gulp, options);
 
 	/**
 	 * Build
 	 */
-	
 	gulp.task('estrad-clean_build', function(cb) {
 		helper.removeFolder(options.html.paths.dest, cb);
 	});
 
-	gulp.task('estrad-build', ['estrad-clean_build', 'estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
+	gulp.task('estrad-build', ['estrad-clean_build', 'estrad-static_build', 'estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
 		helper.removeFolder('/.estrad');
 	});
 
