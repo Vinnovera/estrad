@@ -2,16 +2,25 @@ module.exports = function (gulp, options) {
 	"use strict";
 
 	var
-		concat = require('gulp-concat'),
-		stylus = require('gulp-stylus'),
-		nib    = require('nib'),
-		extend = require('extend'),
+		concat    = require('gulp-concat'),
+		stylus    = require('gulp-stylus'),
+		nib       = require('nib'),
+		extend    = require('extend'),
+		inlineSVG = require('stylus-inline-svg'),
+		path      = require('path'),
 
 		// child_process.spawn() that works with windows
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
 		paths  = options.paths,
-		stylO  = extend({use: [nib()]}, options.settings),
+		stylO  = extend({
+			use: [nib()],
+			define: {
+				url: inlineSVG({paths: paths.src.map(function(item) {
+					return process.cwd() + '/' + path.dirname(item);
+				})})
+			}
+		}, options.settings),
 		csstimeout, compass;
 
 	gulp.task('estrad-css_build', function() {
