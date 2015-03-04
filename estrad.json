@@ -47,6 +47,7 @@
 				"img/**/*.png", 
 				"img/**/*.svg"
 			]
+			],
 			"dest": "./styl"
 		}
 	},
