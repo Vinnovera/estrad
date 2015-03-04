@@ -14,7 +14,12 @@ module.exports = function(gulp) {
 	/**
 	 * Build
 	 */
-	gulp.task('estrad-build', ['estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
+	
+	gulp.task('estrad-clean_build', function(cb) {
+		helper.removeFolder(options.html.paths.dest, cb);
+	});
+
+	gulp.task('estrad-build', ['estrad-clean_build', 'estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
 		helper.removeFolder('/.estrad');
 	});
 

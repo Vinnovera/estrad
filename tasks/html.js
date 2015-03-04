@@ -8,7 +8,7 @@ module.exports = function (gulp, options) {
 		rename   = require('gulp-rename'),
 		paths    = options.html.paths;
 
-	gulp.task('estrad-html_build', function() {
+	gulp.task('estrad-html_build', ['estrad-clean_build'], function() {
 		var 
 			srcPaths = paths.src;
 
