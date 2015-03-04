@@ -11,12 +11,18 @@ module.exports = function (gulp, options) {
 		svgo     = require('imagemin-svgo'),
 		path     = require("path"),
 		helper   = require('../lib/helper'),
-		paths    = options.paths;
+		paths    = options.images.paths;
 
 	gulp.task('estrad-image_watch', function() {
-		if(!options.watch) return;
+		if(!options.images.watch) return;
 
 		helper.startWatcher(paths.listen, imageTask);
+	});
+
+	gulp.task('estrad-image_build', function() {
+		if(!options.images.build) return;
+
+		return imageMin();
 	});
 
 	function imageTask(event, imageFile) {
@@ -24,7 +30,10 @@ module.exports = function (gulp, options) {
 			case 'add':
 			case 'change':
 				imageMin(imageFile);
-				svgToPng(imageFile);
+
+				if(options.images.svgToPng) {
+					svgToPng(imageFile);
+				}
 			break;
 			case 'unlink':
 				unlinkPng(imageFile);
@@ -33,14 +42,16 @@ module.exports = function (gulp, options) {
 	}
 
 	function imageMin(imageFile) {
+		var
+			files = imageFile || paths.listen;
 
-		return gulp.src(imageFile)
+		return gulp.src(files)
 			.pipe(imagemin({
 				progressive: true,
 				svgoPlugins: [{removeViewBox: false}],
 				use: [optipng(), gifsicle(), jpegtran(), svgo()]
 			}))
-			.pipe(gulp.dest(path.dirname(imageFile)));
+			.pipe(gulp.dest(paths.dest));
 	}
 
 	function svgToPng(filePath) {

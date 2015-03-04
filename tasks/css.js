@@ -23,7 +23,7 @@ module.exports = function (gulp, options) {
 		}, options.settings),
 		csstimeout, compass;
 
-	gulp.task('estrad-css_build', function() {
+	gulp.task('estrad-css_build', ['estrad-image_build'], function() {
 		if(!options.build) return;
 
 		if(!options.preprocessor) {

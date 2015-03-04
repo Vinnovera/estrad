@@ -8,13 +8,13 @@ module.exports = function(gulp) {
 	require('./tasks/js')(gulp, options);
 	require('./tasks/css')(gulp, options.css);
 	require('./tasks/server')(gulp, options.server);
-	require('./tasks/image')(gulp, options.images);
+	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);
 
 	/**
 	 * Build
 	 */
-	gulp.task('estrad-build', ['estrad-html_build', 'estrad-css_build', 'estrad-js_build'], function() {
+	gulp.task('estrad-build', ['estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
 		helper.removeFolder('/.estrad');
 	});
 
