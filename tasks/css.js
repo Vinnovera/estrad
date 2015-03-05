@@ -41,13 +41,16 @@ module.exports = function (gulp, options) {
 		if(!options.watch) return;
 
 		if(!options.preprocessor) {
+			cssConcat();
 			helper.startWatcher(paths.listen, cssTask);
 
 		} else if(options.preprocessor === "sass") {
+			
 			if(compass) compass.kill();
 			compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 
 		} else if(options.preprocessor === "stylus") {
+			stylTask();
 			helper.startWatcher(paths.listen, stylTask);
 		}
 	});
