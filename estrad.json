@@ -73,7 +73,7 @@
 		"templateSettings": {}
 	},
 
-	"modulesDir": "modules"
+	"modulesDir": "modules",
 	"static": {
 		"build": false,
 		"paths": {
