@@ -30,55 +30,74 @@ module.exports = function (gulp, options) {
 	});
 
 	gulp.task('estrad-js_build', ['estrad-clean_build'], function(cb) {
+		var
+			destDirPath = paths.dest;
 
 		if(!options.js.build) return cb(null);
 
-		requireConfigPaths(function() {
-			helper.readContentIfExists('/' + paths.src, function(err, data) {
-				var
-					destDirPath = paths.dest,
-					srcDirPath  = path.dirname(paths.src);
+		// Dest is never a file
+		if(path.extname(destDirPath)) destDirPath = path.dirname(destDirPath);
 
-				if(err) return cb(err);
+		// Run r.js if require.js path is defined
+		if(paths.require) {
+			requireConfigPaths(function() {
+				helper.readContentIfExists('/' + paths.src, function(err, data) {
+					var
+						srcDirPath  = path.dirname(paths.src);
 
-				if(path.extname(destDirPath)) destDirPath = paths.dirname(destDirPath);
-
-				helper.readContentIfExists('/' + srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
 					if(err) return cb(err);
 
-					helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
-						rjs({
-							baseUrl: './' + srcDirPath,
-							out: path.basename(paths.dest),
-							name: path.basename(paths.src, '.js'),
-							mainConfigFile: './.estrad/main.js',
-							paths: {
-								requireLib: path.relative(srcDirPath, path.dirname(paths.require)) + '/' + path.basename(paths.require, '.js')
-							},
-							include: 'requireLib'
-						})
-							.pipe(through.obj(function(file, enc, next) {
-								this.push(file);
-								this.end();
-								next();
-							}))
-							.pipe(rename(function(path) {
-								path.extname = '.js';
-							}))
-							.pipe(gulp.dest(destDirPath))
-							.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
-							.pipe(rename(function(path) {
-								path.extname = '.min.js';
-							}))
-							.pipe(gulp.dest(destDirPath))
-							.on('end', function() {
-								cb();
-							});
+					helper.readContentIfExists('/' + srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
+						if(err) return cb(err);
 
+						helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
+							rjs({
+								baseUrl: './' + srcDirPath,
+								out: path.basename(paths.dest),
+								name: path.basename(paths.src, '.js'),
+								mainConfigFile: './.estrad/main.js',
+								paths: {
+									requireLib: path.relative(srcDirPath, path.dirname(paths.require)) + '/' + path.basename(paths.require, '.js')
+								},
+								include: 'requireLib'
+							})
+								.pipe(through.obj(function(file, enc, next) {
+									this.push(file);
+									this.end();
+									next();
+								}))
+								.pipe(rename(function(path) {
+									path.extname = '.js';
+								}))
+								.pipe(gulp.dest(destDirPath))
+								.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
+								.pipe(rename(function(path) {
+									path.extname = '.min.js';
+								}))
+								.pipe(gulp.dest(destDirPath))
+								.on('end', function() {
+									cb();
+								});
+
+						});
 					});
 				});
 			});
-		});
+
+		} else {
+			
+			// Move and uglify javascipt files
+			gulp.src(paths.src)
+				.pipe(gulp.dest(destDirPath))
+				.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
+				.pipe(rename(function(path) {
+					path.extname = '.min.js';
+				}))
+				.pipe(gulp.dest(destDirPath))
+				.on('end', function() {
+					cb();
+				});
+		}
 	});
 
 	function jsTask(event, path) {
