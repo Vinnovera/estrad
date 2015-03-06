@@ -3,11 +3,16 @@ module.exports = function (gulp, options) {
 
 	var
 		concat    = require('gulp-concat'),
-		stylus    = require('gulp-stylus'),
+		gstylus   = require('gulp-stylus'),
+		stylus    = require('stylus'),
 		nib       = require('nib'),
 		extend    = require('extend'),
+		gulpif    = require('gulp-if'),
+		ignore    = require('gulp-ignore'),
+		rename    = require('gulp-rename'),
 		inlineSVG = require('stylus-inline-svg'),
 		path      = require('path'),
+		through2  = require('through2'),
 
 		// child_process.spawn() that works with windows
 		spawn  = require('win-spawn'),
@@ -80,9 +85,31 @@ module.exports = function (gulp, options) {
 
 	/* Stylus */
 	function stylTask() {
+
 		return gulp.src(paths.src)
-			.pipe(stylus(stylO)
-			.on('error', stylError))
+			.pipe(gstylus(stylO)
+				.on('error', stylError)
+			)
+			.pipe(gulp.dest(paths.dest.dir))
+			.pipe(gulpif(!options.build || !options.uglify, ignore.exclude(true)))
+			.pipe(through2.obj(function(file, enc, next) {
+				var
+					str = file.contents.toString();
+
+				stylus(str)
+					.set('compress', true)
+					.render(function(err, css) {
+						str = css;
+					});
+
+				file.contents = new Buffer(str);
+				this.push(file);
+				this.end();
+				next();
+			}))
+			.pipe(rename(function(path) {
+				path.extname = '.min' + path.extname;
+			}))
 			.pipe(gulp.dest(paths.dest.dir));
 	}
 

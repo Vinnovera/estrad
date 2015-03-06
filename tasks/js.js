@@ -17,7 +17,7 @@ module.exports = function (gulp, options) {
 		dir           = require('node-dir'),
 		extend        = require('extend'),
 		toSource      = require('tosource'),
-		through       = require('through2'),
+		through2       = require('through2'),
 		paths         = options.js.paths,
 		jstimeout;
 
@@ -61,7 +61,7 @@ module.exports = function (gulp, options) {
 								},
 								include: 'requireLib'
 							})
-								.pipe(through.obj(function(file, enc, next) {
+								.pipe(through2.obj(function(file, enc, next) {
 									this.push(file);
 									this.end();
 									next();
