@@ -54,6 +54,7 @@
 	"js": {
 		"watch": false,
 		"build": true,
+		"uglify": {},
 		"paths": {
 			"require": "js/vendor/require.js",
 			"listen": [

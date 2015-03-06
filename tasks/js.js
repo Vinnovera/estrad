@@ -5,6 +5,10 @@ module.exports = function (gulp, options) {
 		rjs           = require('gulp-requirejs'),
 		jshint        = require('gulp-jshint'),
 		jshintStylish = require('jshint-stylish'),
+		uglify        = require('gulp-uglify'),
+		rename        = require('gulp-rename'),
+		gulpif        = require('gulp-if'),
+		ignore        = require('gulp-ignore'),
 		fs            = require('fs'),
 		jRcExists     = fs.existsSync(process.cwd() + '/.jshintrc'),
 		jshintRc      = (jRcExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/.jshintrc', 'utf-8')) : JSON.parse(fs.readFileSync(__dirname + '/../.jshintrc', 'utf-8')),
@@ -32,9 +36,12 @@ module.exports = function (gulp, options) {
 		requireConfigPaths(function() {
 			helper.readContentIfExists('/' + paths.src, function(err, data) {
 				var
-					srcDirPath = path.dirname(paths.src);
+					destDirPath = paths.dest,
+					srcDirPath  = path.dirname(paths.src);
 
 				if(err) return cb(err);
+
+				if(path.extname(destDirPath)) destDirPath = paths.dirname(destDirPath);
 
 				helper.readContentIfExists('/' + srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
 					if(err) return cb(err);
@@ -55,7 +62,15 @@ module.exports = function (gulp, options) {
 								this.end();
 								next();
 							}))
-							.pipe(gulp.dest(path.dirname(paths.dest)))
+							.pipe(rename(function(path) {
+								path.extname = '.js';
+							}))
+							.pipe(gulp.dest(destDirPath))
+							.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
+							.pipe(rename(function(path) {
+								path.extname = '.min.js';
+							}))
+							.pipe(gulp.dest(destDirPath))
 							.on('end', function() {
 								cb();
 							});

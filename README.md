@@ -65,6 +65,11 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 
 	"html": {
 		"build": false,
+		"prettify": {
+			"indent_size": 1,
+			"indent_char": "\t",
+			"preserve_newlines": false
+		},
 		"paths": {
 			"src": [
 				"./**/*.html",
@@ -77,19 +82,23 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 
 	"images": {
 		"watch": false,
+		"build": false,
+		"svgToPng": false,
 		"paths": {
 			"listen": [
 				"img/**/*.jpg", 
 				"img/**/*.gif", 
 				"img/**/*.png", 
 				"img/**/*.svg"
-			]
+			],
+			"dest": "./img"
 		}
 	},
 
 	"js": {
 		"watch": false,
 		"build": false,
+		"uglify": {},
 		"paths": {
 			"require": "js/vendor/require.js",
 			"listen": [
