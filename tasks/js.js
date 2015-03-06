@@ -53,7 +53,7 @@ module.exports = function (gulp, options) {
 						helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
 							rjs({
 								baseUrl: './' + srcDirPath,
-								out: path.basename(paths.dest),
+								out: path.basename(paths.src) + path.extname(paths.src),
 								name: path.basename(paths.src, '.js'),
 								mainConfigFile: './.estrad/main.js',
 								paths: {
@@ -66,13 +66,10 @@ module.exports = function (gulp, options) {
 									this.end();
 									next();
 								}))
-								.pipe(rename(function(path) {
-									path.extname = '.js';
-								}))
 								.pipe(gulp.dest(destDirPath))
 								.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
 								.pipe(rename(function(path) {
-									path.extname = '.min.js';
+									path.extname = '.min' + path.extname;
 								}))
 								.pipe(gulp.dest(destDirPath))
 								.on('end', function() {
