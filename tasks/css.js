@@ -91,17 +91,36 @@ module.exports = function (gulp, options) {
 				.on('error', stylError)
 			)
 			.pipe(gulp.dest(paths.dest.dir))
+
+			/**
+			 * === Watch task ends here === *
+			 * 
+			 * Do not compress CSS if booleans build or uglify are false
+			 */
 			.pipe(gulpif(!options.build || !options.uglify, ignore.exclude(true)))
+			
+			/**
+			 * There was an issue running gulp-stylus twice on the same stream. The second stylus compilation didn't seem to do anything.
+			 *
+			 * So we're using this very crude stylus gulp-pluggin to compress the CSS 
+			 */
 			.pipe(through2.obj(function(file, enc, next) {
 				var
+
+					// Turn buffer into string
 					str = file.contents.toString();
 
 				stylus(str)
 					.set('compress', true)
 					.render(function(err, css) {
+
+						// Do not allow silent fails
+						if(err) throw err;
+
 						str = css;
 					});
 
+				// Turn string back into buffer
 				file.contents = new Buffer(str);
 				this.push(file);
 				this.end();
@@ -113,6 +132,7 @@ module.exports = function (gulp, options) {
 			.pipe(gulp.dest(paths.dest.dir));
 	}
 
+	// Silently catch errors and output them without terminating the process
 	function stylError(err) {
 		console.log(err.message);
 		console.log(err.stack);
@@ -120,7 +140,7 @@ module.exports = function (gulp, options) {
 		this.emit('end');
 	}
 
-	// clean up if an error goes unhandled.
+	// Clean up if an error goes unhandled
 	process.on('exit', function() {
 		if (compass) compass.kill();
 	});
