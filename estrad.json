@@ -1,17 +1,20 @@
 {
 	"sourceDir": "/",
+	
+	"modulesDir": "modules",
+	
 	"css": {
-		"watch":        true,
+		"watch":        false,
 		"build":        false,
-		"preprocessor": "stylus",
+		"preprocessor": false,
 		"settings": {},
-		"uglify": true,
+		"uglify": false,
 		"paths": {
 			"listen": [
-				"styl/**/*.styl"
+				"css/**/*.css"
 			],
 			"src": [
-				"styl/*.styl"
+				"css/*.css"
 			],
 			"dest": {
 				"file": "main.css",
@@ -48,13 +51,13 @@
 				"img/**/*.png", 
 				"img/**/*.svg"
 			],
-			"dest": "./styl"
+			"dest": "./img"
 		}
 	},
 
 	"js": {
 		"watch": false,
-		"build": true,
+		"build": false,
 		"uglify": {},
 		"paths": {
 			"require": "js/vendor/require.js",
@@ -75,14 +78,11 @@
 		"templateSettings": {}
 	},
 
-	"modulesDir": "modules",
 	"static": {
 		"build": false,
 		"paths": {
 			"from": [],
 			"to": "./package"
 		}
-	},
-
-	"modulesDir": "src/modules"
+	}
 }
