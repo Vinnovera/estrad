@@ -122,6 +122,8 @@ module.exports = function (gulp, options) {
 	}
 
 	function requireConfigPaths(callback) {
+		if(!paths.require) return;
+		
 		dir.files(process.cwd() + '/' + options.modulesDir, function(err, files) {
 			var
 				srcDirPath = path.dirname(paths.src),
