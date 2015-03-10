@@ -38,7 +38,7 @@ module.exports = function (gulp, options) {
 			spawn('compass', ['compile'], {stdio: 'inherit'});
 
 		} else if(options.preprocessor === "stylus") {
-			stylTask();
+			stylTask(true);
 		}
 	});
 
@@ -84,7 +84,7 @@ module.exports = function (gulp, options) {
 	}
 
 	/* Stylus */
-	function stylTask() {
+	function stylTask(buildTask) {
 
 		return gulp.src(paths.src)
 			.pipe(gstylus(stylO)
@@ -95,9 +95,9 @@ module.exports = function (gulp, options) {
 			/**
 			 * === Watch task ends here === *
 			 * 
-			 * Do not compress CSS if booleans build or uglify are false
+			 * Do not compress CSS if not buildTask or boolean uglify is false
 			 */
-			.pipe(gulpif(!options.build || !options.uglify, ignore.exclude(true)))
+			.pipe(gulpif(!buildTask || !options.uglify, ignore.exclude(true)))
 			
 			/**
 			 * There was an issue running gulp-stylus twice on the same stream. The second stylus compilation didn't seem to do anything.
