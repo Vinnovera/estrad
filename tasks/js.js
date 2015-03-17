@@ -10,9 +10,9 @@ module.exports = function (gulp, options) {
 		gulpif        = require('gulp-if'),
 		ignore        = require('gulp-ignore'),
 		fs            = require('fs'),
-		jRcExists     = fs.existsSync(process.cwd() + '/.jshintrc'),
-		jshintRc      = (jRcExists) ? JSON.parse(fs.readFileSync(process.cwd() + '/.jshintrc', 'utf-8')) : JSON.parse(fs.readFileSync(__dirname + '/../.jshintrc', 'utf-8')),
 		helper        = require('../lib/helper'),
+		jRcExists     = fs.existsSync(helper.cwd('.jshintrc')),
+		jshintRc      = (jRcExists) ? JSON.parse(fs.readFileSync(helper.cwd('.jshintrc'), 'utf-8')) : JSON.parse(fs.readFileSync(__dirname + '/../.jshintrc', 'utf-8')),
 		path          = require('path'),
 		dir           = require('node-dir'),
 		extend        = require('extend'),
@@ -41,13 +41,13 @@ module.exports = function (gulp, options) {
 		// Run r.js if require.js path is defined
 		if(paths.require) {
 			requireConfigPaths(function() {
-				helper.readContentIfExists('/' + paths.src, function(err, data) {
+				helper.readContentIfExists(paths.src, function(err, data) {
 					var
 						srcDirPath  = path.dirname(paths.src);
 
 					if(err) return cb(err);
 
-					helper.readContentIfExists('/' + srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
+					helper.readContentIfExists(srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
 						if(err) return cb(err);
 
 						helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
@@ -124,7 +124,7 @@ module.exports = function (gulp, options) {
 	function requireConfigPaths(callback) {
 		if(!paths.require) return;
 		
-		dir.files(process.cwd() + '/' + options.modulesDir, function(err, files) {
+		dir.files(helper.cwd(options.modulesDir), function(err, files) {
 			var
 				srcDirPath = path.dirname(paths.src),
 				requirePaths = {},

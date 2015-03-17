@@ -21,7 +21,7 @@ module.exports = function (gulp, options) {
 			use: [nib()],
 			define: {
 				url: inlineSVG({paths: paths.src.map(function(item) {
-					return process.cwd() + '/' + path.dirname(item);
+					return helper.cwd(path.dirname(item));
 				})})
 			}
 		}, options.settings),
