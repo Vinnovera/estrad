@@ -14,16 +14,16 @@ module.exports = function (gulp, options) {
 
 		if(!options.html.build) return;
 
-		srcPaths.push('!' + paths.dest + '/**/*.html');
+		srcPaths.push('!' + options.dir.build);
 
 		// Build html files
 		return gulp.src(srcPaths)
 			.pipe(partials({
-				folder: options.modulesDir
+				folder: options.dir.partials
 			}))
 			.pipe(rename(function(path) {
 				var
-					sourceDir = options.sourceDir.replace(/^\/|\/$/g, ''),
+					sourceDir = options.dir.src.replace(/^\/|\/$/g, ''),
 					index = path.dirname.indexOf(sourceDir);
 
 				if(index !== -1) {

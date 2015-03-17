@@ -17,14 +17,6 @@ module.exports = function (gulp, options) {
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
 		paths  = options.paths,
-		stylO  = extend({
-			use: [nib()],
-			define: {
-				url: inlineSVG({paths: paths.src.map(function(item) {
-					return helper.cwd(path.dirname(item));
-				})})
-			}
-		}, options.settings),
 		csstimeout, compass;
 
 	gulp.task('estrad-css_build', ['estrad-image_build', 'estrad-clean_build'], function() {
@@ -78,31 +70,30 @@ module.exports = function (gulp, options) {
 	function cssConcat() {
 
 		return gulp.src(paths.src)
-			.pipe(concat(paths.dest.file))
-			.pipe(gulp.dest(paths.dest.dir));
+			.pipe(concat(path.basename(paths.dest)))
+			.pipe(gulp.dest(path.dirname(paths.dest)));
 	}
 
 	/* Stylus */
 	function stylTask(buildTask) {
 
 		return gulp.src(paths.src)
-			.pipe(stylus(stylO)
+			.pipe(stylus(options.settings)
 				.on('error', stylError)
 			)
-			.pipe(gulp.dest(paths.dest.dir))
+			.pipe(gulp.dest(path.dirname(paths.dest)))
 
 			/**
 			 * === Watch task ends here === *
 			 * 
-			 * Do not compress CSS if not buildTask or boolean uglify is false
+			 * Do not compress CSS if buildTask or options.minify is false
 			 */
-			.pipe(gulpif(!buildTask || !options.uglify, ignore.exclude(true)))
-			
+			.pipe(gulpif(!buildTask || !options.minify, ignore.exclude(true)))
 			.pipe(minify())
 			.pipe(rename(function(path) {
 				path.extname = '.min' + path.extname;
 			}))
-			.pipe(gulp.dest(paths.dest.dir));
+			.pipe(gulp.dest(path.dirname(paths.dest)));
 	}
 
 	// Silently catch errors and output them without terminating the process

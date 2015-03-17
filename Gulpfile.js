@@ -15,7 +15,16 @@
 			}
 		};
 
-	require("./gulpfile-extend")(gulp);
+	require("./gulpfile-extend")(gulp, {
+		css: {
+			watch: true,
+			paths: {
+				listen: [
+					"css/**/*.css"
+				]
+			}
+		}
+	});
 
 	gulp.task("jswatch", function() {
 		chokidar(paths.js.listen, function(ev, path) {

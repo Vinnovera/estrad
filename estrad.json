@@ -1,25 +1,24 @@
 {
-	"sourceDir": "/",
-	
-	"modulesDir": "modules",
+	"dir": {
+		"src": "/",
+		"partials": "modules",
+		"build": "package"
+	},
 	
 	"css": {
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
-		"settings": {},
-		"uglify": false,
+		"settings":     {},
+		"minify":       false,
 		"paths": {
 			"listen": [
-				"css/**/*.css"
+				
 			],
 			"src": [
-				"css/*.css"
+				"!./node_modules/"
 			],
-			"dest": {
-				"file": "main.css",
-				"dir": "package/css/"
-			}
+			"dest": ""
 		}
 	},
 
@@ -32,11 +31,9 @@
 		},
 		"paths": {
 			"src": [
-				"./**/*.html",
-				"!./modules/**/*.html", 
-				"!./node_modules/**/*.html"
+				"!./node_modules"
 			],
-			"dest": "./package"
+			"dest": ""
 		}
 	},
 
@@ -46,12 +43,9 @@
 		"svgToPng": false,
 		"paths": {
 			"listen": [
-				"img/**/*.jpg", 
-				"img/**/*.gif", 
-				"img/**/*.png", 
-				"img/**/*.svg"
+
 			],
-			"dest": "./img"
+			"dest": ""
 		}
 	},
 
@@ -60,14 +54,14 @@
 		"build": false,
 		"uglify": {},
 		"paths": {
-			"require": "js/vendor/require.js",
+			"require": "",
 			"listen": [
-				"js/**/*.js", 
-				"modules/**/*.js", 
-				"!/node_modules/**/*.js"
+				
 			],
-			"src":  "js/main.js",
-			"dest": "package/js/main.js"
+			"src":  [
+				"!./node_modules"
+			],
+			"dest": ""
 		}
 	},
 
@@ -81,8 +75,10 @@
 	"static": {
 		"build": false,
 		"paths": {
-			"from": [],
-			"to": "./package"
+			"src": [
+				"!./node_modules"
+			],
+			"dest": ""
 		}
 	}
 }

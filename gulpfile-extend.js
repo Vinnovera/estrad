@@ -1,9 +1,10 @@
-module.exports = function(gulp) {
+module.exports = function(gulp, options) {
 	"use strict";
 
 	var
-		helper     = require('./lib/helper'),
-		options    = helper.getEstradOptions();
+		helper = require('./lib/helper');
+
+	options = helper.extendDefaultOptions(options);
 
 	require('./tasks/js')(gulp, options);
 	require('./tasks/css')(gulp, options.css);
@@ -38,4 +39,6 @@ module.exports = function(gulp) {
 		console.log(err.stack);
 		process.exit(1);
 	});
+
+	return options;
 };

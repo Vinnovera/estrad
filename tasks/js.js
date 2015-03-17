@@ -61,6 +61,8 @@ module.exports = function (gulp, options) {
 								},
 								include: 'requireLib'
 							})
+
+								// Fix gulp-requirejs end event bug
 								.pipe(through2.obj(function(file, enc, next) {
 									this.push(file);
 									this.end();
