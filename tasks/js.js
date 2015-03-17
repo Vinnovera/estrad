@@ -145,7 +145,7 @@ module.exports = function (gulp, options) {
 
 			fileContent = 'require.config( { paths:' + JSON.stringify(requirePaths) + '});';
 
-			helper.writeFile('/' + srcDirPath + '/modulesPaths.js', fileContent, callback);
+			helper.writeFile(srcDirPath + '/modulesPaths.js', fileContent, callback);
 		});
 	}
 
