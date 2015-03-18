@@ -72,21 +72,27 @@ module.exports = function (gulp, options) {
 
 	function cssConcat() {
 		var
-			sourcePath = helper.prependPath(options.dir.src, paths.src);
+			sourcePath = helper.prependPath(options.dir.src, paths.src),
+			destPath   = helper.prependPath(options.dir.src, paths.dest);
 
 		return gulp.src(sourcePath)
-			.pipe(concat(path.basename(paths.dest)))
-			.pipe(gulp.dest(path.dirname(paths.dest)));
+			.pipe(concat(path.basename(destPath)))
+			.pipe(gulp.dest(path.dirname(destPath)));
 	}
 
 	/* Stylus */
 	function stylTask(buildTask) {
+		var
+			sourcePath = helper.prependPath(options.dir.src, paths.src),
+			destPath   = helper.prependPath(options.dir.src, paths.dest);
 
-		return gulp.src(paths.src)
+		if(path.extname(destPath)) destPath = path.dirname(destPath);
+
+		return gulp.src(sourcePath)
 			.pipe(stylus(options.css.settings)
 				.on('error', stylError)
 			)
-			.pipe(gulp.dest(path.dirname(paths.dest)))
+			.pipe(gulp.dest(destPath))
 
 			/**
 			 * === Watch task ends here === *
@@ -98,7 +104,7 @@ module.exports = function (gulp, options) {
 			.pipe(rename(function(path) {
 				path.extname = '.min' + path.extname;
 			}))
-			.pipe(gulp.dest(path.dirname(paths.dest)));
+			.pipe(gulp.dest(destPath));
 	}
 
 	// Silently catch errors and output them without terminating the process
