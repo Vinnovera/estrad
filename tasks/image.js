@@ -9,14 +9,17 @@ module.exports = function (gulp, options) {
 		gifsicle = require('imagemin-gifsicle'),
 		jpegtran = require('imagemin-jpegtran'),
 		svgo     = require('imagemin-svgo'),
-		path     = require("path"),
+		path     = require('path'),
 		helper   = require('../lib/helper'),
 		paths    = options.images.paths;
 
 	gulp.task('estrad-image_watch', function() {
+		var
+			pathsListen = helper.prependPath(options.dir.src, paths.listen);
+
 		if(!options.images.watch) return;
 
-		helper.startWatcher(paths.listen, imageTask);
+		helper.startWatcher(pathsListen, imageTask);
 	});
 
 	gulp.task('estrad-image_build', ['estrad-clean_build'], function() {
@@ -43,7 +46,8 @@ module.exports = function (gulp, options) {
 
 	function imageMin(imageFile) {
 		var
-			files = imageFile || paths.listen;
+			destPath = helper.prependPath(options.dir.src, paths.dest),
+			files    = imageFile || helper.prependPath(options.dir.src, paths.listen);
 
 		return gulp.src(files)
 			.pipe(imagemin({
@@ -51,7 +55,7 @@ module.exports = function (gulp, options) {
 				svgoPlugins: [{removeViewBox: false}],
 				use: [optipng(), gifsicle(), jpegtran(), svgo()]
 			}))
-			.pipe(gulp.dest(paths.dest));
+			.pipe(gulp.dest(destPath));
 	}
 
 	function svgToPng(filePath) {
