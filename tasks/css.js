@@ -16,38 +16,41 @@ module.exports = function (gulp, options) {
 		// child_process.spawn() that works with windows
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
-		paths  = options.paths,
+		paths  = options.css.paths,
 		csstimeout, compass;
 
 	gulp.task('estrad-css_build', ['estrad-image_build', 'estrad-clean_build'], function() {
-		if(!options.build) return;
+		if(!options.css.build) return;
 
-		if(!options.preprocessor) {
+		if(!options.css.preprocessor) {
 			cssConcat();
 
-		} else if(options.preprocessor === "sass") {
+		} else if(options.css.preprocessor === "sass") {
 			spawn('compass', ['compile'], {stdio: 'inherit'});
 
-		} else if(options.preprocessor === "stylus") {
+		} else if(options.css.preprocessor === "stylus") {
 			stylTask(true);
 		}
 	});
 
 	gulp.task('estrad-css_watch', function() {
-		if(!options.watch) return;
+		var
+			pathsListen = helper.prependPath(options.dir.src, paths.listen);
 
-		if(!options.preprocessor) {
+		if(!options.css.watch) return;
+
+		if(!options.css.preprocessor) {
 			cssConcat();
-			helper.startWatcher(paths.listen, cssTask);
+			helper.startWatcher(pathsListen, cssTask);
 
-		} else if(options.preprocessor === "sass") {
+		} else if(options.css.preprocessor === "sass") {
 			
 			if(compass) compass.kill();
 			compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
 
-		} else if(options.preprocessor === "stylus") {
+		} else if(options.css.preprocessor === "stylus") {
 			stylTask();
-			helper.startWatcher(paths.listen, stylTask);
+			helper.startWatcher(pathsListen, stylTask);
 		}
 	});
 
@@ -68,8 +71,10 @@ module.exports = function (gulp, options) {
 	}
 
 	function cssConcat() {
+		var
+			sourcePath = helper.prependPath(options.dir.src, paths.src);
 
-		return gulp.src(paths.src)
+		return gulp.src(sourcePath)
 			.pipe(concat(path.basename(paths.dest)))
 			.pipe(gulp.dest(path.dirname(paths.dest)));
 	}
@@ -78,7 +83,7 @@ module.exports = function (gulp, options) {
 	function stylTask(buildTask) {
 
 		return gulp.src(paths.src)
-			.pipe(stylus(options.settings)
+			.pipe(stylus(options.css.settings)
 				.on('error', stylError)
 			)
 			.pipe(gulp.dest(path.dirname(paths.dest)))
@@ -86,9 +91,9 @@ module.exports = function (gulp, options) {
 			/**
 			 * === Watch task ends here === *
 			 * 
-			 * Do not compress CSS if buildTask or options.minify is false
+			 * Do not compress CSS if buildTask or options.css.minify is false
 			 */
-			.pipe(gulpif(!buildTask || !options.minify, ignore.exclude(true)))
+			.pipe(gulpif(!buildTask || !options.css.minify, ignore.exclude(true)))
 			.pipe(minify())
 			.pipe(rename(function(path) {
 				path.extname = '.min' + path.extname;

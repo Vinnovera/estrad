@@ -7,7 +7,7 @@ module.exports = function(gulp, options) {
 	options = helper.extendDefaultOptions(options);
 
 	require('./tasks/js')(gulp, options);
-	require('./tasks/css')(gulp, options.css);
+	require('./tasks/css')(gulp, options);
 	require('./tasks/server')(gulp, options.server);
 	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);

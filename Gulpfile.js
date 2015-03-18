@@ -16,12 +16,19 @@
 		};
 
 	require("./gulpfile-extend")(gulp, {
+		dir: {
+			src: 'src'
+		},
 		css: {
 			watch: true,
 			paths: {
+				src: [
+					'css/*.css'
+				],
 				listen: [
-					"css/**/*.css"
-				]
+					'css/**/*.css'
+				],
+				dest: 'css/main.css'
 			}
 		}
 	});
