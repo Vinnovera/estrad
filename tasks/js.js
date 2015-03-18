@@ -60,7 +60,7 @@ module.exports = function (gulp, options) {
 
 							rjs({
 								baseUrl: './' + srcDirPath,
-								out: path.basename(sourcePath) + path.extname(sourcePath),
+								out: path.basename(sourcePath),
 								name: path.basename(sourcePath, '.js'),
 								mainConfigFile: './.estrad/main.js',
 								paths: {
@@ -84,7 +84,6 @@ module.exports = function (gulp, options) {
 								.on('end', function() {
 									cb();
 								});
-
 						});
 					});
 				});
