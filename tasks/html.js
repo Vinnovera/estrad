@@ -6,18 +6,20 @@ module.exports = function (gulp, options) {
 		partials = require('gulp-estrad-template'),
 		prettify = require('gulp-prettify'),
 		rename   = require('gulp-rename'),
+		helper   = require('../lib/helper'),
 		paths    = options.html.paths;
 
 	gulp.task('estrad-html_build', ['estrad-clean_build'], function() {
 		var 
-			srcPaths = paths.src;
+			srcPath  = helper.prependPath(options.dir.src, paths.src),
+			destPath = helper.prependPath(options.dir.dest, paths.dest);
 
 		if(!options.html.build) return;
 
-		srcPaths.push('!' + options.dir.build);
+		srcPaths.push('!' + options.dir.partials);
 
 		// Build html files
-		return gulp.src(srcPaths)
+		return gulp.src(srcPath)
 			.pipe(partials({
 				folder: options.dir.partials
 			}))
@@ -31,6 +33,6 @@ module.exports = function (gulp, options) {
 				}
 			}))
 			.pipe(gulpif(options.html.prettify, prettify(options.html.prettify)))
-			.pipe(gulp.dest(paths.dest));
+			.pipe(gulp.dest(destPath));
 	});
 };

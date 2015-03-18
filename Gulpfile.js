@@ -21,14 +21,29 @@
 		},
 		css: {
 			watch: true,
+			build: true,
+			preprocessor: 'stylus',
 			paths: {
+				src: 'styl/*.styl',
+				listen: [
+					'styl/**/*.styl'
+				],
+				dest: 'css/'
+			}
+		},
+		js: {
+			watch: true,
+			build: true,
+			uglify: true,
+			paths: {
+				require: 'js/require.js',
 				src: [
-					'css/*.css'
+					'js/main.js'
 				],
 				listen: [
-					'css/**/*.css'
+					'js/**/*.js'
 				],
-				dest: 'css/main.css'
+				dest: 'js/'
 			}
 		}
 	});
