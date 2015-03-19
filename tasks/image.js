@@ -1,4 +1,4 @@
-module.exports = function (gulp, options) {
+module.exports = function (gulp, o) {
 	"use strict";
 
 	var
@@ -11,19 +11,19 @@ module.exports = function (gulp, options) {
 		svgo     = require('imagemin-svgo'),
 		path     = require('path'),
 		helper   = require('../lib/helper'),
-		paths    = options.images.paths;
+		paths    = o.images.paths;
 
 	gulp.task('estrad-image_watch', function() {
 		var
-			pathsListen = helper.prependPath(options.dir.src, paths.listen);
+			pathsListen = helper.prependPath(o.dir.src, paths.listen);
 
-		if(!options.images.watch) return;
+		if(!o.images.watch) return;
 
 		helper.startWatcher(pathsListen, imageTask);
 	});
 
 	gulp.task('estrad-image_build', ['estrad-clean_build'], function() {
-		if(!options.images.build) return;
+		if(!o.images.build) return;
 
 		return imageMin();
 	});
@@ -34,7 +34,7 @@ module.exports = function (gulp, options) {
 			case 'change':
 				imageMin(imageFile);
 
-				if(options.images.svgToPng) {
+				if(o.images.svgToPng) {
 					svgToPng(imageFile);
 				}
 			break;
@@ -46,8 +46,8 @@ module.exports = function (gulp, options) {
 
 	function imageMin(imageFile) {
 		var
-			destPath = helper.prependPath(options.dir.src, paths.dest),
-			files    = imageFile || helper.prependPath(options.dir.src, paths.listen);
+			destPath = helper.prependPath(o.dir.src, paths.dest),
+			files    = imageFile || helper.prependPath(o.dir.src, paths.listen);
 
 		return gulp.src(files)
 			.pipe(imagemin({

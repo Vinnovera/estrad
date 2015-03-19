@@ -1,4 +1,4 @@
-module.exports = function (gulp, options) {
+module.exports = function (gulp, o) {
 	"use strict";
 
 	var
@@ -18,14 +18,14 @@ module.exports = function (gulp, options) {
 		extend        = require('extend'),
 		toSource      = require('tosource'),
 		through2       = require('through2'),
-		paths         = options.js.paths,
+		paths         = o.js.paths,
 		jstimeout;
 
 	gulp.task('estrad-js_watch', function() {
 		var
-			listenPath = helper.prependPath(options.dir.src, paths.listen);
+			listenPath = helper.prependPath(o.dir.src, paths.listen);
 
-		if(!options.js.watch) return;
+		if(!o.js.watch) return;
 
 		helper.startWatcher(listenPath, jsTask);
 
@@ -34,10 +34,10 @@ module.exports = function (gulp, options) {
 
 	gulp.task('estrad-js_build', ['estrad-clean_build'], function(cb) {
 		var
-			destPath   = helper.prependPath(options.dir.src, paths.dest),
-			sourcePath = helper.prependPath(options.dir.src, paths.src);
+			destPath   = helper.prependPath(o.dir.dest, paths.dest),
+			sourcePath = helper.prependPath(o.dir.src, paths.src);
 
-		if(!options.js.build) return cb(null);
+		if(!o.js.build) return cb(null);
 
 		// Dest is never a file
 		if(path.extname(destPath)) destPath = path.dirname(destPath);
@@ -56,7 +56,7 @@ module.exports = function (gulp, options) {
 
 						helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
 							var
-								requirePath = helper.prependPath(options.dir.src, paths.require);
+								requirePath = helper.prependPath(o.dir.src, paths.require);
 
 							rjs({
 								baseUrl: './' + srcDirPath,
@@ -76,7 +76,7 @@ module.exports = function (gulp, options) {
 									next();
 								}))
 								.pipe(gulp.dest(destPath))
-								.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
+								.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 								.pipe(rename(function(path) {
 									path.extname = '.min' + path.extname;
 								}))
@@ -94,7 +94,7 @@ module.exports = function (gulp, options) {
 			// Move and uglify javascipt files
 			gulp.src(paths.src)
 				.pipe(gulp.dest(destDirPath))
-				.pipe(gulpif(options.js.uglify, uglify(options.js.uglify), ignore.exclude(true)))
+				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
 					path.extname = '.min.js';
 				}))
@@ -132,9 +132,9 @@ module.exports = function (gulp, options) {
 	function requireConfigPaths(callback) {
 		if(!paths.require) return;
 		
-		dir.files(helper.cwd(options.modulesDir), function(err, files) {
+		dir.files(helper.cwd(o.dir.partials), function(err, files) {
 			var
-				srcPath = helper.prependPath(options.dir.src, path.dirname(paths.src)),
+				srcPath = helper.prependPath(o.dir.src, path.dirname(paths.src)),
 				requirePaths = {},
 				fileContent;
 
