@@ -8,7 +8,7 @@ module.exports = function(gulp, options) {
 
 	require('./tasks/js')(gulp, options);
 	require('./tasks/css')(gulp, options);
-	require('./tasks/server')(gulp, options.server);
+	require('./tasks/server')(gulp, options);
 	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);
 	require('./tasks/static')(gulp, options);

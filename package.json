@@ -29,6 +29,7 @@
     "imagemin-optipng": "^0.1.0",
     "imagemin-svgo": "^0.1.0",
     "jshint-stylish": "~0.1.5",
+    "minimist": "^1.1.1",
     "nib": "^1.1.0",
     "node-dir": "^0.1.6",
     "rimraf": "^2.3.0",
@@ -39,7 +40,8 @@
     "win-spawn": "^2.0.0"
   },
   "devDependencies": {
-    "gulp": "~3.5.0"
+    "gulp": "~3.5.0",
+    "stylus": "^0.50.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

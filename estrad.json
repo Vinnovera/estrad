@@ -1,8 +1,8 @@
 {
 	"dir": {
 		"src": "/",
-		"partials": "modules",
-		"build": "package"
+		"partials": "/",
+		"build": "/"
 	},
 	
 	"css": {

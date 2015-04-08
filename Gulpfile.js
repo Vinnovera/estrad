@@ -8,6 +8,7 @@
 		chokidar  = require("glob-chokidar"),
 		chalk     = require("chalk"),
 		fs        = require("fs"),
+		stylus    = require("stylus"),
 		jshintrc  = JSON.parse(fs.readFileSync("./.jshintrc", "utf-8")),
 		paths     = {
 			js: {
@@ -23,6 +24,11 @@
 			watch: true,
 			build: true,
 			preprocessor: 'stylus',
+			settings: {
+				define: {
+					url: stylus.url()
+				}
+			},
 			paths: {
 				src: 'styl/*.styl',
 				listen: [
@@ -45,6 +51,9 @@
 				],
 				dest: 'js/'
 			}
+		},
+		server: {
+			start: true
 		}
 	});
 
