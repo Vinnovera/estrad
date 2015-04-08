@@ -60,7 +60,7 @@
 	/**
 	 * Handle requests for static files
 	 */
-	app.use(express.static(process.cwd() + argv.src + '/'));
+	app.use(express.static(process.cwd() + '/' + argv.src + '/'));
 
 	/**
 	 * Accept requests
