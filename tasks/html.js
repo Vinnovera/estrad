@@ -16,7 +16,7 @@ module.exports = function (gulp, o) {
 
 		if(!o.html.build) return;
 
-		srcPaths.push('!' + o.dir.partials);
+		srcPath.push('!' + o.dir.partials);
 
 		// Build html files
 		return gulp.src(srcPath)
