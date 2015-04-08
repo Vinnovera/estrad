@@ -6,3 +6,4 @@ pages/
 index.html
 .gitignore
 Gulpfile.js
+test/
