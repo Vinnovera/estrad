@@ -79,7 +79,7 @@
 
 		pathname = argv.src + pathname;
 
-		fs.exists(process.cwd() + pathname, function(exists) {
+		fs.exists(process.cwd() + '/' + pathname, function(exists) {
 			if(!exists) {
 				res.writeHead(404, 'Not Found');
 				res.end('Not found');
