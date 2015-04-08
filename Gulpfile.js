@@ -18,7 +18,9 @@
 
 	require("./gulpfile-extend")(gulp, {
 		dir: {
-			src: 'src'
+			src: 'src',
+			partials: 'src/modules',
+			dest: 'package'
 		},
 		css: {
 			watch: true,
