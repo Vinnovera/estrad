@@ -91,7 +91,8 @@ module.exports = function (gulp, o) {
 			sourcePath = helper.prependPath(o.dir.src, paths.src),
 			destPath;
 
-		if(!buildTask) {
+		// Explicit false
+		if(buildTask !== false) {
 			destPath = helper.prependPath(o.dir.src, paths.dest);
 		} else {
 			destPath = helper.prependPath(o.dir.dest, paths.dest);
