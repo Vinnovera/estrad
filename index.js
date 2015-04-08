@@ -8,14 +8,15 @@
 		proxy = require("./lib/proxy"),
 		helper = require('./lib/helper'),
 		partials = require("estrad-template"),
+		minimist = require('minimist'),
 		fs = require("fs"),
-		options = helper.getEstradOptions(), 
-		port = options.server.port;
+		argv = minimist(process.argv.splice(2)),
+		port = argv.port;
 
 	/**
 	 * Handle proxy requests
 	 */
-	if(options.server.proxy) {
+	if(argv.proxy) {
 		app.use(function(req, res, next) {
 			proxy.getProxyUrl(req, function(err, proxyUrl) {
 				if(err) return next();
@@ -35,7 +36,7 @@
 	/**
 	 * Bootstrap require.config.paths for JS files in modules/
 	 */
-	app.get('/' + options.js.paths.src, function(req, res) {
+	app.get('/' + argv.jspaths.split(','), function(req, res) {
 		helper.readContentIfExists(url.parse(req.url).pathname, function(err, data) {
 			if(err) {
 				res.writeHead(404, 'Not Found');
@@ -59,7 +60,7 @@
 	/**
 	 * Handle requests for static files
 	 */
-	app.use(express.static(process.cwd() + options.sourceDir + '/'));
+	app.use(express.static(process.cwd() + argv.src + '/'));
 
 	/**
 	 * Accept requests
@@ -76,7 +77,7 @@
 
 		if(pathname === "/") pathname = "/index.html";
 
-		pathname = options.sourceDir + pathname;
+		pathname = argv.src + pathname;
 
 		fs.exists(process.cwd() + pathname, function(exists) {
 			if(!exists) {
@@ -87,7 +88,7 @@
 
 			console.log("[" + chalk.green("estrad-server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, { folder: options.modulesDir }, function(err, content) {
+			partials(pathname, { folder: argv.modules }, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();

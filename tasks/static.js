@@ -1,13 +1,13 @@
-module.exports = function(gulp, options) {
+module.exports = function(gulp, o) {
 	"use strict";
 
 	var
 		helper = require('../lib/helper');
 
 	gulp.task('estrad-static_build', ['estrad-clean_build'], function() {
-		if(!options.static.build) return;
+		if(!o.static.build) return;
 
-		gulp.src(options.static.paths.from, { base: helper.cwd(options.sourceDir) })
-			.pipe(gulp.dest(options.static.paths.to));
+		gulp.src(o.static.paths.src, { base: helper.cwd(o.dir.src) })
+			.pipe(gulp.dest(o.static.paths.dest));
 	});
 };

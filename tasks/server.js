@@ -1,4 +1,4 @@
-module.exports = function (gulp, options) {
+module.exports = function (gulp, o) {
 	"use strict";
 
 	var
@@ -7,10 +7,17 @@ module.exports = function (gulp, options) {
 
 	// https://gist.github.com/webdesserts/5632955
 	gulp.task('estrad-server', function() {
-		if(!options.start) return; 
+		if(!o.server.start) return; 
 
 		if(node) node.kill();
-		node = spawn('node', [__dirname + '/../index.js'], {stdio: 'inherit'});
+		node = spawn('node', [
+			__dirname + '/../index.js',
+			'--port', o.server.port,
+			'--proxy', o.server.proxy,
+			'--jspaths', o.js.paths.src.join(','),
+			'--src', o.dir.src,
+			'--modules', o.dir.partials
+		], {stdio: 'inherit'});
 
 		node.on('close', function(code) {
 			if(code === 8) {

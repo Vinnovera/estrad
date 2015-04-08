@@ -1,13 +1,14 @@
-module.exports = function(gulp) {
+module.exports = function(gulp, options) {
 	"use strict";
 
 	var
-		helper     = require('./lib/helper'),
-		options    = helper.getEstradOptions();
+		helper = require('./lib/helper');
+
+	options = helper.extendDefaultOptions(options);
 
 	require('./tasks/js')(gulp, options);
-	require('./tasks/css')(gulp, options.css);
-	require('./tasks/server')(gulp, options.server);
+	require('./tasks/css')(gulp, options);
+	require('./tasks/server')(gulp, options);
 	require('./tasks/image')(gulp, options);
 	require('./tasks/html')(gulp, options);
 	require('./tasks/static')(gulp, options);
@@ -16,7 +17,7 @@ module.exports = function(gulp) {
 	 * Build
 	 */
 	gulp.task('estrad-clean_build', function(cb) {
-		helper.removeFolder(options.html.paths.dest, cb);
+		helper.removeFolder(options.dir.dest, cb);
 	});
 
 	gulp.task('estrad-build', ['estrad-clean_build', 'estrad-static_build', 'estrad-html_build', 'estrad-image_build', 'estrad-css_build', 'estrad-js_build'], function() {
@@ -38,4 +39,6 @@ module.exports = function(gulp) {
 		console.log(err.stack);
 		process.exit(1);
 	});
+
+	return options;
 };

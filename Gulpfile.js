@@ -8,6 +8,7 @@
 		chokidar  = require("glob-chokidar"),
 		chalk     = require("chalk"),
 		fs        = require("fs"),
+		stylus    = require("stylus"),
 		jshintrc  = JSON.parse(fs.readFileSync("./.jshintrc", "utf-8")),
 		paths     = {
 			js: {
@@ -15,7 +16,48 @@
 			}
 		};
 
-	require("./gulpfile-extend")(gulp);
+	require("./gulpfile-extend")(gulp, {
+		dir: {
+			src: 'src',
+			partials: 'src/modules',
+			dest: 'package'
+		},
+		css: {
+			watch: true,
+			build: true,
+			preprocessor: 'stylus',
+			settings: {
+				define: {
+					url: stylus.url()
+				}
+			},
+			paths: {
+				src: 'styl/*.styl',
+				listen: [
+					'styl/**/*.styl'
+				],
+				dest: 'css/'
+			}
+		},
+		js: {
+			watch: true,
+			build: true,
+			uglify: true,
+			paths: {
+				require: 'js/require.js',
+				src: [
+					'js/main.js'
+				],
+				listen: [
+					'js/**/*.js'
+				],
+				dest: 'js/'
+			}
+		},
+		server: {
+			start: true
+		}
+	});
 
 	gulp.task("jswatch", function() {
 		chokidar(paths.js.listen, function(ev, path) {
