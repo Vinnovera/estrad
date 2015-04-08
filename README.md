@@ -26,40 +26,37 @@ Include Estrad in your `Gulpfile.js` and pass it gulp:
 ```js
 var
 	gulp = require('gulp'),
-	estrad = require('estrad')(gulp);
+	estrad = require('estrad')(gulp, options);
 
 gulp.task('default', ['estrad']);
 ```
 
 ## Options
 
-Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json` to set options. The available options are:
+Estrad includes a lot of tasks, all are disabled by default. The default options are:
 
 ```json
 {
-	"sourceDir": "/",
-	"modulesDir": "modules",
-
+	"dir": {
+		"src": "/",
+		"partials": "/",
+		"build": "/"
+	},
+	
 	"css": {
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
 		"settings":     {},
+		"minify":       false,
 		"paths": {
 			"listen": [
-				"css/**/*.css",
-				"modules/**/*.css",
-				"!css/main.css"
+				
 			],
 			"src": [
-				"css/**/*.css",
-				"modules/**/*.css", 
-				"!css/main.css"
+				"!./node_modules/"
 			],
-			"dest": {
-				"file": "main.css",
-				"dir": "css/"
-			}
+			"dest": ""
 		}
 	},
 
@@ -72,11 +69,9 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		},
 		"paths": {
 			"src": [
-				"./**/*.html",
-				"!./modules/**/*.html", 
-				"!./node_modules/**/*.html"
+				"!./node_modules"
 			],
-			"dest": "./package"
+			"dest": ""
 		}
 	},
 
@@ -86,12 +81,9 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"svgToPng": false,
 		"paths": {
 			"listen": [
-				"img/**/*.jpg", 
-				"img/**/*.gif", 
-				"img/**/*.png", 
-				"img/**/*.svg"
+
 			],
-			"dest": "./img"
+			"dest": ""
 		}
 	},
 
@@ -100,14 +92,14 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"build": false,
 		"uglify": {},
 		"paths": {
-			"require": "js/vendor/require.js",
+			"require": "",
 			"listen": [
-				"js/**/*.js", 
-				"modules/**/*.js", 
-				"!/node_modules/**/*.js"
+				
 			],
-			"src":  "js/main.js",
-			"dest": "package/js/main.js"
+			"src":  [
+				"!./node_modules"
+			],
+			"dest": ""
 		}
 	},
 
@@ -117,14 +109,28 @@ Estrad includes a lot of tasks, all are disabled by default. Create `estrad.json
 		"port":  8080,
 		"templateSettings": {}
 	},
+
+	"static": {
+		"build": false,
+		"paths": {
+			"src": [
+				"!./node_modules"
+			],
+			"dest": ""
+		}
+	}
 }
 ```
 
-### sourceDir
+### dir
+#### src
 Directory of source files. 
 
-### modulesDir
+#### partials
 Directory of html partials.
+
+#### build
+Directory to output the built project to.
 
 ### css
 
