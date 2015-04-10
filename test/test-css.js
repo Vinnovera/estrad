@@ -62,5 +62,32 @@ describe('tasks/css.js', function() {
 			});
 		});
 	});
+
+	describe('stylTask', function() {
+
+		it('should compile stylus sourcefiles', function(done) {
+			var
+				c = css(gulp, {
+					dir: {
+						src: 'test/css'
+					},
+					css: {
+						preprocessor: 'stylus',
+						paths: {
+							src: '*.styl',
+							dest: '/dest'
+						}
+					}
+				});
+
+			c.stylTask(function() {
+				helper.readContentIfExists('test/css/dest/styl.css', function(err, data) {
+					assert.equal(data, "body {\n  height: 100px;\n}\nmain {\n  background: #639;\n}\n");
+
+					done();
+				});
+			});
+		});
+	});
 });
 })();

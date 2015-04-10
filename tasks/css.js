@@ -156,6 +156,7 @@ module.exports = function (gulp, o) {
 
 	// Make accessable for testing
 	return {
-		cssConcat: cssConcat
+		cssConcat: cssConcat,
+		stylTask: stylTask
 	};
 };
