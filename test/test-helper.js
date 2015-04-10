@@ -17,6 +17,7 @@ describe('lib/helper.js', function() {
 	});
 
 	describe('readContentIfExists', function() {
+
 		it('should return error if file is missing', function(done) {
 			helper.readContentIfExists('/test/helper/missingFile.txt', function(err) {
 				assert.equal(err instanceof Error, true);
@@ -33,6 +34,7 @@ describe('lib/helper.js', function() {
 	});
 
 	describe('extendDefaultOptions', function() {
+
 		it('default options sanity check', function(done) {
 			var 
 				options = helper.extendDefaultOptions();
@@ -87,6 +89,7 @@ describe('lib/helper.js', function() {
 	});
 
 	describe('cwd', function() {
+
 		it('should prepend process.cwd', function(done) {
 			var path = helper.cwd('path', 'to', 'file.txt');
 
@@ -97,6 +100,7 @@ describe('lib/helper.js', function() {
 	});
 
 	describe('prependPath', function() {
+		
 		it('should prepend string to path', function(done) {
 			var
 				path = helper.prependPath('root', 'path/to/file.txt');

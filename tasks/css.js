@@ -15,11 +15,6 @@ module.exports = function (gulp, o) {
 		paths  = o.css.paths,
 		csstimeout, compass;
 
-	module.exports = {
-		cssTask: cssTask,
-		cssConcat: cssConcat
-	};
-
 	gulp.task('estrad-css_build', ['estrad-image_build', 'estrad-clean_build'], function(callback) {
 		if(!o.css.build) return callback();
 
@@ -78,6 +73,7 @@ module.exports = function (gulp, o) {
 			destPath, stream;
 
 		if(typeof buildTask === 'function') callback = buildTask;
+		if(!callback || typeof callback !== 'function') callback = function() {};
 
 		if(buildTask !== true) {
 			destPath = helper.prependPath(o.dir.src, paths.dest);
@@ -100,6 +96,7 @@ module.exports = function (gulp, o) {
 			destPath, stream;
 
 		if(typeof buildTask === 'function') callback = buildTask;
+		if(!callback || typeof callback !== 'function') callback = function() {};
 
 		// Explicit true
 		if(buildTask !== true) {
@@ -144,4 +141,9 @@ module.exports = function (gulp, o) {
 	process.on('exit', function() {
 		if (compass) compass.kill();
 	});
+
+	// Make accessable for testing
+	return {
+		cssConcat: cssConcat
+	};
 };
