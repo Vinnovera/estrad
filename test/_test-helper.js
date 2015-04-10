@@ -2,6 +2,7 @@
 "use strict";
 
 var
+	fs     = require('fs'),
 	assert = require('assert'),
 	helper = require('../lib/helper');
 
@@ -100,7 +101,7 @@ describe('lib/helper.js', function() {
 	});
 
 	describe('prependPath', function() {
-		
+
 		it('should prepend string to path', function(done) {
 			var
 				path = helper.prependPath('root', 'path/to/file.txt');
@@ -117,6 +118,25 @@ describe('lib/helper.js', function() {
 			assert.deepEqual(paths, ['root/path/to/file.txt', 'root/path/to/otherFile.txt']);
 
 			done();
+		});
+	});
+
+	describe('removeFolder', function() {
+		fs.mkdir('test/helper/dest', function(err) {
+
+			it('should remove folder', function(done) {
+				assert.equal(err instanceof Error, false);
+
+				if(err) throw err;
+
+				helper.removeFolder('test/helper/dest', function() {
+					fs.exists(process.cwd() + '/test/helper/dest', function(exists) {
+						assert.equal(exists, false);
+
+						done();
+					});
+				});
+			});
 		});
 	});
 });
