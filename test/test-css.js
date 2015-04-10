@@ -88,6 +88,32 @@ describe('tasks/css.js', function() {
 				});
 			});
 		});
+
+		it('should compile and minify stylus sourcefiles', function(done) {
+			var
+				c = css(gulp, {
+					dir: {
+						src: 'test/css',
+						dest: 'test/css'
+					},
+					css: {
+						preprocessor: 'stylus',
+						minify: true,
+						paths: {
+							src: '*.styl',
+							dest: '/dest'
+						}
+					}
+				});
+
+			c.stylTask(true, function() {
+				helper.readContentIfExists('test/css/dest/styl.min.css', function(err, data) {
+					assert.equal(data, "body{height:100px}main{background:#639}");
+
+					done();
+				});
+			});
+		});
 	});
 });
 })();
