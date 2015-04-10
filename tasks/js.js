@@ -17,27 +17,27 @@ module.exports = function (gulp, o) {
 		dir           = require('node-dir'),
 		extend        = require('extend'),
 		toSource      = require('tosource'),
-		through2       = require('through2'),
+		through2      = require('through2'),
 		paths         = o.js.paths,
 		jstimeout;
 
-	gulp.task('estrad-js_watch', function() {
+	gulp.task('estrad-js_watch', function(callback) {
 		var
 			listenPath = helper.prependPath(o.dir.src, paths.listen);
 
-		if(!o.js.watch) return;
+		if(!o.js.watch) return callback();
 
 		helper.startWatcher(listenPath, jsTask);
 
-		requireConfigPaths();
+		requireConfigPaths(callback);
 	});
 
-	gulp.task('estrad-js_build', ['estrad-clean_build'], function(cb) {
+	gulp.task('estrad-js_build', ['estrad-clean_build'], function(callback) {
 		var
 			destPath   = helper.prependPath(o.dir.dest, paths.dest),
 			sourcePath = helper.prependPath(o.dir.src, paths.src);
 
-		if(!o.js.build) return cb(null);
+		if(!o.js.build) return callback();
 
 		// Dest is never a file
 		if(path.extname(destPath)) destPath = path.dirname(destPath);
@@ -49,10 +49,10 @@ module.exports = function (gulp, o) {
 					var
 						srcDirPath  = path.dirname(sourcePath);
 
-					if(err) return cb(err);
+					if(err) return callback(err);
 
 					helper.readContentIfExists(srcDirPath + '/modulesPaths.js', function(err, modulesPathsData) {
-						if(err) return cb(err);
+						if(err) return callback(err);
 
 						helper.writeFile('/.estrad/main.js', mergeRequireConfigPaths(data, modulesPathsData), function() {
 							var
@@ -82,7 +82,7 @@ module.exports = function (gulp, o) {
 								}))
 								.pipe(gulp.dest(destPath))
 								.on('end', function() {
-									cb();
+									callback();
 								});
 						});
 					});
@@ -100,7 +100,7 @@ module.exports = function (gulp, o) {
 				}))
 				.pipe(gulp.dest(destDirPath))
 				.on('end', function() {
-					cb();
+					callback();
 				});
 		}
 	});
@@ -130,7 +130,9 @@ module.exports = function (gulp, o) {
 	}
 
 	function requireConfigPaths(callback) {
-		if(!paths.require) return;
+		if(!callback || typeof callback !== 'function') callback = function() {};
+
+		if(!paths.require) return callback();
 		
 		dir.files(helper.cwd(o.dir.partials), function(err, files) {
 			var
@@ -138,7 +140,7 @@ module.exports = function (gulp, o) {
 				requirePaths = {},
 				fileContent;
 
-			if (err) throw err;
+			if (err) return callback(err);
 
 			files
 				.filter(function(item) {
