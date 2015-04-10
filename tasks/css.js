@@ -83,6 +83,18 @@ module.exports = function (gulp, o) {
 
 		stream = gulp.src(sourcePath)
 			.pipe(concat(path.basename(destPath)))
+			.pipe(gulp.dest(path.dirname(destPath)))
+
+			/**
+			 * === Watch task ends here === *
+			 * 
+			 * Do not compress CSS if buildTask or o.css.minify is false
+			 */
+			.pipe(gulpif(buildTask !== true || !o.css.minify, ignore.exclude(true)))
+			.pipe(minify())
+			.pipe(rename(function(path) {
+				path.extname = '.min' + path.extname;
+			}))
 			.pipe(gulp.dest(path.dirname(destPath)));
 
 		stream.on('end', callback);
