@@ -2,9 +2,9 @@
 "use strict";
 
 var
-	gulp = require('gulp'),
+	gulp   = require('gulp'),
 	assert = require('assert'),
-	css = require('../tasks/css'),
+	css    = require('../tasks/css'),
 	helper = require('../lib/helper');
 
 describe('tasks/css.js', function() {

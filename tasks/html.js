@@ -9,17 +9,24 @@ module.exports = function (gulp, o) {
 		helper   = require('../lib/helper'),
 		paths    = o.html.paths;
 
-	gulp.task('estrad-html_build', ['estrad-clean_build'], function() {
+	gulp.task('estrad-html_build', ['estrad-clean_build'], htmlTask);
+
+	function htmlTask(callback) {
 		var 
 			srcPath  = helper.prependPath(o.dir.src, paths.src),
-			destPath = helper.prependPath(o.dir.dest, paths.dest);
+			destPath = helper.prependPath(o.dir.dest, paths.dest),
+			stream;
 
-		if(!o.html.build) return;
+		if(!o.html.build) return callback();
+
+		if(typeof srcPath === 'string') {
+			srcPath = [srcPath];
+		}
 
 		srcPath.push('!' + o.dir.partials);
 
 		// Build html files
-		return gulp.src(srcPath)
+		stream = gulp.src(srcPath)
 			.pipe(partials({
 				folder: o.dir.partials
 			}))
@@ -34,5 +41,12 @@ module.exports = function (gulp, o) {
 			}))
 			.pipe(gulpif(o.html.prettify, prettify(o.html.prettify)))
 			.pipe(gulp.dest(destPath));
-	});
+
+		stream.on('end', callback);
+		stream.on('error', callback);
+	}
+
+	return {
+		htmlTask: htmlTask
+	};
 };
