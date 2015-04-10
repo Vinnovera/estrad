@@ -4,7 +4,6 @@ module.exports = function (gulp, o) {
 	var
 		concat    = require('gulp-concat'),
 		stylus    = require('gulp-stylus'),
-		nib       = require('nib'),
 		extend    = require('extend'),
 		gulpif    = require('gulp-if'),
 		ignore    = require('gulp-ignore'),

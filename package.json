@@ -30,7 +30,6 @@
     "imagemin-svgo": "^0.1.0",
     "jshint-stylish": "~0.1.5",
     "minimist": "^1.1.1",
-    "nib": "^1.1.0",
     "node-dir": "^0.1.6",
     "rimraf": "^2.3.0",
     "stylus": "^0.50.0",
