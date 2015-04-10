@@ -8,6 +8,14 @@ var
 	helper = require('../lib/helper');
 
 describe('tasks/css.js', function() {
+	
+	// Teardown
+	after(function(done) {
+		helper.removeFolder('test/css/dest', function() {
+			done();
+		});
+	});
+
 	describe('cssConcat', function() {
 
 		it('should concatinate css files', function(done) {
