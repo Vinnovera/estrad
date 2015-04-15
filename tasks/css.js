@@ -4,56 +4,54 @@ module.exports = function (gulp, o) {
 	var
 		concat    = require('gulp-concat'),
 		stylus    = require('gulp-stylus'),
-		nib       = require('nib'),
-		extend    = require('extend'),
 		gulpif    = require('gulp-if'),
 		ignore    = require('gulp-ignore'),
 		rename    = require('gulp-rename'),
-		inlineSVG = require('stylus-inline-svg'),
-		path      = require('path'),
 		minify    = require('gulp-minify-css'),
+		path      = require('path'),
 
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
 		paths  = o.css.paths,
 		csstimeout, compass;
 
-	gulp.task('estrad-css_build', ['estrad-image_build', 'estrad-clean_build'], function() {
-		if(!o.css.build) return;
+	gulp.task('estrad-css_build', ['estrad-image_build', 'estrad-clean_build'], function(callback) {
+		if(!o.css.build) return callback();
 
 		if(!o.css.preprocessor) {
-			cssConcat(true);
+			cssConcat(true, callback);
 
 		} else if(o.css.preprocessor === "sass") {
 			spawn('compass', ['compile'], {stdio: 'inherit'});
+			callback();
 
 		} else if(o.css.preprocessor === "stylus") {
-			stylTask(true);
+			stylTask(true, callback);
 		}
 	});
 
-	gulp.task('estrad-css_watch', function() {
+	gulp.task('estrad-css_watch', function(callback) {
 		var
 			pathsListen = helper.prependPath(o.dir.src, paths.listen);
 
-		if(!o.css.watch) return;
+		if(!o.css.watch) return callback();
 
 		if(!o.css.preprocessor) {
-			cssConcat();
+			cssConcat(callback);
 			helper.startWatcher(pathsListen, cssTask);
 
 		} else if(o.css.preprocessor === "sass") {
 			
 			if(compass) compass.kill();
-			compass =  spawn('compass', ['watch'], {stdio: 'inherit'});
+			compass = spawn('compass', ['watch'], {stdio: 'inherit'});
+			callback();
 
 		} else if(o.css.preprocessor === "stylus") {
-			stylTask();
+			stylTask(callback);
 			helper.startWatcher(pathsListen, stylTask);
 		}
 	});
 
-	/* CSS */
 	function cssTask(event) {
 		switch(event) {
 			case 'add':
@@ -69,27 +67,48 @@ module.exports = function (gulp, o) {
 		}
 	}
 
-	function cssConcat(buildTask) {
+	function cssConcat(buildTask, callback) {
 		var
 			sourcePath = helper.prependPath(o.dir.src, paths.src),
-			destPath;
+			destPath, stream;
 
-		if(!buildTask) {
+		if(typeof buildTask === 'function') callback = buildTask;
+		if(!callback || typeof callback !== 'function') callback = function() {};
+
+		if(buildTask !== true) {
 			destPath = helper.prependPath(o.dir.src, paths.dest);
 		} else {
 			destPath = helper.prependPath(o.dir.dest, paths.dest);
 		}
 
-		return gulp.src(sourcePath)
+		stream = gulp.src(sourcePath)
 			.pipe(concat(path.basename(destPath)))
+			.pipe(gulp.dest(path.dirname(destPath)))
+
+			/**
+			 * === Watch task ends here === *
+			 * 
+			 * Do not compress CSS if buildTask or o.css.minify is false
+			 */
+			.pipe(gulpif(buildTask !== true || !o.css.minify, ignore.exclude(true)))
+			.pipe(minify())
+			.pipe(rename(function(path) {
+				path.extname = '.min' + path.extname;
+			}))
 			.pipe(gulp.dest(path.dirname(destPath)));
+
+		stream.on('end', callback);
+		stream.on('error', callback);
 	}
 
 	/* Stylus */
-	function stylTask(buildTask) {
+	function stylTask(buildTask, callback) {
 		var
 			sourcePath = helper.prependPath(o.dir.src, paths.src),
-			destPath;
+			destPath, stream;
+
+		if(typeof buildTask === 'function') callback = buildTask;
+		if(!callback || typeof callback !== 'function') callback = function() {};
 
 		// Explicit true
 		if(buildTask !== true) {
@@ -100,7 +119,7 @@ module.exports = function (gulp, o) {
 
 		if(path.extname(destPath)) destPath = path.dirname(destPath);
 
-		return gulp.src(sourcePath)
+		stream = gulp.src(sourcePath)
 			.pipe(stylus(o.css.settings)
 				.on('error', stylError)
 			)
@@ -111,12 +130,15 @@ module.exports = function (gulp, o) {
 			 * 
 			 * Do not compress CSS if buildTask or o.css.minify is false
 			 */
-			.pipe(gulpif(!buildTask || !o.css.minify, ignore.exclude(true)))
+			.pipe(gulpif(buildTask !== true || !o.css.minify, ignore.exclude(true)))
 			.pipe(minify())
 			.pipe(rename(function(path) {
 				path.extname = '.min' + path.extname;
 			}))
 			.pipe(gulp.dest(destPath));
+
+		stream.on('end', callback);
+		stream.on('error', callback);
 	}
 
 	// Silently catch errors and output them without terminating the process
@@ -131,4 +153,10 @@ module.exports = function (gulp, o) {
 	process.on('exit', function() {
 		if (compass) compass.kill();
 	});
+
+	// Make accessable for testing
+	return {
+		cssConcat: cssConcat,
+		stylTask: stylTask
+	};
 };

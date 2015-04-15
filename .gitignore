@@ -3,3 +3,4 @@
 *.sublime-*
 .sass-cache
 /package
+/test/**/dest

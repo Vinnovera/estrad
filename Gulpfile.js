@@ -12,7 +12,7 @@
 		jshintrc  = JSON.parse(fs.readFileSync("./.jshintrc", "utf-8")),
 		paths     = {
 			js: {
-				listen: ["*.js", "lib/**/*.js", "tasks/**/*.js"]
+				listen: ["*.js", "lib/**/*.js", "tasks/**/*.js", "test/**/*.js"]
 			}
 		};
 
