@@ -36,26 +36,28 @@
 	/**
 	 * Bootstrap require.config.paths for JS files in modules/
 	 */
-	app.get('/' + argv.jspaths.split(','), function(req, res) {
-		helper.readContentIfExists(url.parse(req.url).pathname, function(err, data) {
-			if(err) {
-				res.writeHead(404, 'Not Found');
-				res.end('Not found');
-				throw err;
-			}
-
-			helper.readContentIfExists('/js/modulesPaths.js', function(err, paths) {
+	if(argv.requirejs) {
+		app.get('/' + argv.jspaths.split(','), function(req, res) {
+			helper.readContentIfExists(url.parse(req.url).pathname, function(err, data) {
 				if(err) {
-					res.writeHead(200);
-					res.end(data);
+					res.writeHead(404, 'Not Found');
+					res.end('Not found');
 					return;
 				}
 
-				res.writeHead(200);
-				res.end(paths + data);
+				helper.readContentIfExists('/js/modulesPaths.js', function(err, paths) {
+					if(err) {
+						res.writeHead(200);
+						res.end(data);
+						return;
+					}
+
+					res.writeHead(200);
+					res.end(paths + data);
+				});
 			});
 		});
-	});
+	}
 
 	/**
 	 * Handle requests for static files

@@ -15,6 +15,7 @@ module.exports = function (gulp, o) {
 			'--port', o.server.port,
 			'--proxy', o.server.proxy,
 			'--jspaths', o.js.paths.src.join(','),
+			'--requirejs', o.js.paths.require,
 			'--src', o.dir.src,
 			'--modules', o.dir.partials
 		], {stdio: 'inherit'});
