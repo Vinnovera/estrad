@@ -33,31 +33,7 @@
 	app.get('/', handler);
 	app.get('*.html', handler);
 
-	/**
-	 * Bootstrap require.config.paths for JS files in modules/
-	 */
-	if(argv.requirejs) {
-		app.get('/' + argv.jspaths.split(','), function(req, res) {
-			helper.readContentIfExists(url.parse(req.url).pathname, function(err, data) {
-				if(err) {
-					res.writeHead(404, 'Not Found');
-					res.end('Not found');
-					return;
-				}
-
-				helper.readContentIfExists('/js/modulesPaths.js', function(err, paths) {
-					if(err) {
-						res.writeHead(200);
-						res.end(data);
-						return;
-					}
-
-					res.writeHead(200);
-					res.end(paths + data);
-				});
-			});
-		});
-	}
+	if(argv.requirejs) app.get('/' + argv.jspaths.split(','), requireJsConfigHandler);
 
 	/**
 	 * Handle requests for static files
@@ -100,6 +76,33 @@
 
 				res.writeHead(200, {"Content-Type": "text/html"});
 				res.end(content);
+			});
+		});
+	}
+
+	/**
+	 * Bootstrap require.config.paths for JS files in modules/
+	 */
+	function requireJsConfigHandler(req, res) {
+		var
+			pathname = url.parse(req.url).pathname;
+
+		helper.readContentIfExists(pathname, function(err, data) {
+			if(err) {
+				res.writeHead(404, 'Not Found');
+				res.end('Not found');
+				return;
+			}
+
+			helper.readContentIfExists('/js/modulesPaths.js', function(err, paths) {
+				res.writeHead(200);
+
+				if(err) {
+					res.end(data);
+					
+				} else {
+					res.end(paths + data);
+				}
 			});
 		});
 	}
