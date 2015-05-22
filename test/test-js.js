@@ -151,7 +151,7 @@ describe('tasks/js.js', function() {
 				helper.readContentIfExists('/test/js/dest/modulesPaths.js', function(err, data) {
 					if(err) throw err;
 
-					assert.equal(data, 'require.config({paths:{\"module\":\"../modules/module\"}});')
+					assert.equal(data, 'require.config({paths:{\"module\":\"../modules/module\"}});');
 
 					done();
 				});

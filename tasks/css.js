@@ -141,7 +141,7 @@ module.exports = function (gulp, o) {
 		stream.on('error', callback);
 	}
 
-	// Silently catch errors and output them without terminating the process
+	// Catch errors and output them without terminating the process
 	function stylError(err) {
 		console.log(err.message);
 		console.log(err.stack);
