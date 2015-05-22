@@ -131,7 +131,7 @@ module.exports = function (gulp, o) {
 	}
 
 	function requireConfigPaths(callback) {
-		if(!callback || typeof callback !== 'function') callback = function() {};
+		callback = callback || function() {};
 
 		if(!paths.require) return callback();
 		
@@ -154,7 +154,7 @@ module.exports = function (gulp, o) {
 					requirePaths[fileName] = path.relative(srcPath, path.dirname(item)) + '/' + fileName;
 				});
 
-			fileContent = 'require.config({ paths:' + JSON.stringify(requirePaths) + ' });';
+			fileContent = 'require.config({paths:' + JSON.stringify(requirePaths) + '});';
 
 			helper.writeFile(srcPath + '/modulesPaths.js', fileContent, callback);
 		});
@@ -203,6 +203,7 @@ module.exports = function (gulp, o) {
 
 	// Make accessable for testing
 	return {
+		requireConfigPaths: requireConfigPaths,
 		mergeRequireConfigPaths: mergeRequireConfigPaths,
 		findRequireConfig: findRequireConfig
 	};

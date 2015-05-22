@@ -3,6 +3,7 @@
 
 var
 	gulp   = require('gulp'),
+	fs     = require('fs'),
 	assert = require('assert'),
 	js     = require('../tasks/js'),
 	helper = require('../lib/helper');
@@ -102,6 +103,59 @@ describe('tasks/js.js', function() {
 
 			assert.equal(result, 'require.config({paths:{bar:"baz"}});\ntest');
 
+		});
+	});
+
+	describe('requireConfigPaths', function() {
+
+		it('should create modulesPaths.js', function(done) {
+			var 
+				j = js(gulp, {
+					dir: {
+						src: 'test/js',
+						partials: 'test/js/empty-modules'
+					},
+					js: {
+						paths: {
+							src: '/dest/main.js',
+							require: true
+						}
+					}
+				});
+
+			j.requireConfigPaths(function() {
+				fs.exists(process.cwd() + '/test/js/dest/modulesPaths.js', function(exists) {
+					assert.equal(exists, true);
+
+					done();
+				});
+			});
+		});
+
+		it('should create modulesPaths.js with aliases for javascript files in the partials folder', function(done) {
+			var 
+				j = js(gulp, {
+					dir: {
+						src: 'test/js',
+						partials: 'test/js/modules'
+					},
+					js: {
+						paths: {
+							src: '/dest/main.js',
+							require: true
+						}
+					}
+				});
+
+			j.requireConfigPaths(function() {
+				helper.readContentIfExists('/test/js/dest/modulesPaths.js', function(err, data) {
+					if(err) throw err;
+
+					assert.equal(data, 'require.config({paths:{\"module\":\"../modules/module\"}});')
+
+					done();
+				});
+			});
 		});
 	});
 });
