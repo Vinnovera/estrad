@@ -1,4 +1,10 @@
-require.config({ 
+/**
+ * Linebreaks, tabs, and spaces are intentional
+ */
+
+	require.config(
+
+{ 
 	paths: {},
-	foo: 'bar'
-});
+  foo: 'bar'
+}    );
