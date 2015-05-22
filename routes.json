@@ -1,4 +1,5 @@
 {
 	"/that/very/cool/json": "/routes.json",
-	"/override/query": "/always/with?this=query"
+	"/override/query": "/always/with?this=query",
+	"/different/domain": "https://www.example.com"
 }
