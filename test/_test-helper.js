@@ -1,3 +1,8 @@
+/**
+ * This file has a wonky name to make sure it's run first as the other
+ * tests use the helper methods
+ */
+
 (function() {
 "use strict";
 

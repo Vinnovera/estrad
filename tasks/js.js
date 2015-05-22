@@ -161,22 +161,8 @@ module.exports = function (gulp, o) {
 
 	function mergeRequireConfigPaths(file1, file2) {
 		var
-			rex = /require.config\(([\s\S]+?)\)/i,
-			match = rex.exec(file1),
-			obj1 = {},
-			obj2 = {},
-			result;
-
-		if(match) {
-			obj1 = eval('(' + match[1] + ')');
-		}
-
-		match = rex.exec(file2);
-
-		// The second file, if it at all exists, should be guaratneed to have a match
-		if(match) {
-			obj2 = eval('(' + match[1] + ')');
-		}
+			obj1 = findRequireConfig(file1),
+			obj2 = findRequireConfig(file2);
 
 		if('paths' in obj1 && 'paths' in obj2) {
 			obj1.paths = extend(obj1.paths, obj2.paths);
@@ -190,4 +176,22 @@ module.exports = function (gulp, o) {
 
 		return file1;
 	}
+
+	function findRequireConfig(data) {
+		var
+			rex    = /require.config\(([\s\S]+?)\)/i,
+			match  = rex.exec(data),
+			result = {};
+
+		if(match) {
+			result = eval('(' + match[1] + ')');
+		}
+
+		return result;
+	}
+
+	// Make accessable for testing
+	return {
+		findRequireConfig: findRequireConfig
+	};
 };
