@@ -63,7 +63,7 @@ describe('lib/proxy.js', function() {
 	});
 
 	describe('getProxyUrl', function() {
-		it('return error', function(done) {
+		it('should return error', function(done) {
 			var
 				reqUrl = url.parse('http://localhost/');
 
@@ -74,12 +74,23 @@ describe('lib/proxy.js', function() {
 			})
 		});
 
-		it('return matched target', function(done) {
+		it('should return matched target', function(done) {
 			var
 				reqUrl = url.parse('http://localhost/different/domain');
 
 			proxy.getProxyUrl({url: reqUrl}, function(err, target) {
 				assert.equal(target, 'https://www.example.com/');
+
+				done();
+			})
+		});
+
+		it('should return matched target with custom arguments', function(done) {
+			var
+				reqUrl = url.parse('http://localhost/custom/123/test');
+
+			proxy.getProxyUrl({url: reqUrl}, function(err, target) {
+				assert.equal(target, 'https://www.example.com/test?id=123');
 
 				done();
 			})
