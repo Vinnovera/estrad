@@ -19,6 +19,7 @@ module.exports = function (gulp, o) {
 		toSource      = require('tosource'),
 		through2      = require('through2'),
 		paths         = o.js.paths,
+		requireRex    = /require.config\(([\s\S]+?)\)/i,
 		jstimeout;
 
 	gulp.task('estrad-js_watch', function(callback) {
@@ -93,12 +94,12 @@ module.exports = function (gulp, o) {
 			
 			// Move and uglify javascipt files
 			gulp.src(paths.src)
-				.pipe(gulp.dest(destDirPath))
+				.pipe(gulp.dest(destPath))
 				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
 					path.extname = '.min.js';
 				}))
-				.pipe(gulp.dest(destDirPath))
+				.pipe(gulp.dest(destPath))
 				.on('end', function() {
 					callback();
 				});
@@ -130,7 +131,7 @@ module.exports = function (gulp, o) {
 	}
 
 	function requireConfigPaths(callback) {
-		if(!callback || typeof callback !== 'function') callback = function() {};
+		callback = callback || function() {};
 
 		if(!paths.require) return callback();
 		
@@ -153,7 +154,7 @@ module.exports = function (gulp, o) {
 					requirePaths[fileName] = path.relative(srcPath, path.dirname(item)) + '/' + fileName;
 				});
 
-			fileContent = 'require.config({ paths:' + JSON.stringify(requirePaths) + ' });';
+			fileContent = 'require.config({paths:' + JSON.stringify(requirePaths) + '});';
 
 			helper.writeFile(srcPath + '/modulesPaths.js', fileContent, callback);
 		});
@@ -161,33 +162,49 @@ module.exports = function (gulp, o) {
 
 	function mergeRequireConfigPaths(file1, file2) {
 		var
-			rex = /require.config\(([\s\S]+?)\)/i,
-			match = rex.exec(file1),
-			obj1 = {},
-			obj2 = {},
-			result;
-
-		if(match) {
-			obj1 = eval('(' + match[1] + ')');
-		}
-
-		match = rex.exec(file2);
-
-		// The second file, if it at all exists, should be guaratneed to have a match
-		if(match) {
-			obj2 = eval('(' + match[1] + ')');
-		}
+			obj1   = findRequireConfig(file1),
+			obj2   = findRequireConfig(file2),
+			result = file1;
 
 		if('paths' in obj1 && 'paths' in obj2) {
 			obj1.paths = extend(obj1.paths, obj2.paths);
 
-			return file1.replace(rex, 'require.config(' + toSource(obj1) + ');');
+			result = file1.replace(requireRex, 'require.config(' + toSource(obj1, null, false) + ')');
 
 		} else if ('paths' in obj2) {
+			obj1.paths = obj2.paths;
 
-			return 'require.config(' + (toSource(obj2) + ');' + file1);
+			if(requireRex.test(file1)) {
+				result = file1.replace(requireRex, 'require.config(' + toSource(obj1, null, false) + ')');
+
+			} else {
+				obj1 = {
+					paths: obj2.paths
+				};
+
+				result = 'require.config(' + (toSource(obj1, null, false) + ');\n' + file1);
+			}
 		}
 
-		return file1;
+		return result;
 	}
+
+	function findRequireConfig(data) {
+		var
+			match  = requireRex.exec(data),
+			result = {};
+
+		if(match) {
+			result = eval('(' + match[1] + ')');
+		}
+
+		return result;
+	}
+
+	// Make accessable for testing
+	return {
+		requireConfigPaths: requireConfigPaths,
+		mergeRequireConfigPaths: mergeRequireConfigPaths,
+		findRequireConfig: findRequireConfig
+	};
 };
