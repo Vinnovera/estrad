@@ -126,7 +126,7 @@ module.exports = function (gulp, o) {
 
 	function jsLint(path) {
 		return gulp.src(path)
-			.pipe(jshint(jshintRc))
+			.pipe(jshint(extend({}, jshintRc)))
 			.pipe(jshint.reporter(jshintStylish));
 	}
 
