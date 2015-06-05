@@ -7,5 +7,6 @@
 	"newcap": true,
 	"noempty": true,
 	"strict": true,
-	"onevar": true
+	"onevar": true,
+	"maxcomplexity": 14
 }
