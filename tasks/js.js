@@ -153,9 +153,15 @@ module.exports = function (gulp, o) {
 				})
 				.map(function(item) {
 					var
-						fileName = path.basename(item, '.js');
+						fileName     = path.basename(item, '.js'),
+						dirname      = path.dirname(item),
+						relativePath = '';
 
-					requirePaths[fileName] = path.relative(srcPath, path.dirname(item)) + '/' + fileName;
+					if(dirname) {
+						relativePath = path.relative(srcPath, dirname) + '/';
+					}
+
+					requirePaths[fileName] = relativePath + fileName;
 				});
 
 			fileContent = 'require.config({paths:' + JSON.stringify(requirePaths) + '});';
