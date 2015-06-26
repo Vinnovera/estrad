@@ -131,11 +131,15 @@ module.exports = function (gulp, o) {
 	}
 
 	function requireConfigPaths(callback) {
+		var dirPath;
+
 		callback = callback || function() {};
 
 		if(!paths.require || !paths.dir) return callback();
 		
-		dir.files(helper.cwd(paths.dir), function(err, files) {
+		dirPath = helper.prependPath(o.dir.src, paths.dir);
+
+		dir.files(helper.cwd(dirPath), function(err, files) {
 			var
 				srcPath = helper.prependPath(o.dir.src, path.dirname(paths.src)),
 				requirePaths = {},
