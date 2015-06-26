@@ -87,14 +87,14 @@
 		var
 			pathname = url.parse(req.url).pathname;
 
-		helper.readContentIfExists(pathname, function(err, data) {
+		helper.readContentIfExists(argv.src + pathname, function(err, data) {
 			if(err) {
-				res.writeHead(404, 'Not Found');
+				res.writeHead(500, 'Server Error');
 				res.end('Not found');
 				return;
 			}
 
-			helper.readContentIfExists('/js/modulesPaths.js', function(err, paths) {
+			helper.readContentIfExists(argv.src + '/js/modulesPaths.js', function(err, paths) {
 				res.writeHead(200);
 
 				if(err) {
