@@ -155,11 +155,9 @@ module.exports = function (gulp, o) {
 					var
 						fileName     = path.basename(item, '.js'),
 						dirname      = path.dirname(item),
-						relativePath = '';
+						relativePath = path.relative(srcPath, dirname);
 
-					if(dirname) {
-						relativePath = path.relative(srcPath, dirname) + '/';
-					}
+					if(relativePath) relativePath += '/';
 
 					requirePaths[fileName] = relativePath + fileName;
 				});
