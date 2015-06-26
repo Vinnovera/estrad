@@ -8,12 +8,12 @@ module.exports = function(gulp, o) {
 	gulp.task('estrad-static_build', ['estrad-clean_build'], staticTask);
 
 	function staticTask(callback) {
-		var
-			sourcePath = helper.prependPath(o.dir.src, paths.src),
-			destPath   = helper.prependPath(o.dir.dest, paths.dest),
-			stream;
+		var sourcePath, destPath, stream;
 
 		if(!o.static.build) return callback();
+
+		sourcePath = helper.prependPath(o.dir.src, paths.src);
+		destPath = helper.prependPath(o.dir.dest, paths.dest);
 
 		stream = gulp.src(sourcePath)
 			.pipe(gulp.dest(destPath));
