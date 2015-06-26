@@ -95,6 +95,17 @@ describe('lib/proxy.js', function() {
 				done();
 			})
 		});
+
+		it('should return matched target with wildcard and with specified extension', function(done) {
+			var
+				reqUrl = url.parse('http://localhost/wildcard/extension/123/test.jpg');
+
+			proxy.getProxyUrl({url: reqUrl}, function(err, target) {
+				assert.equal(target, 'https://www.example.com/123/test.jpg');
+
+				done();
+			})
+		});
 	});
 });
 })();
