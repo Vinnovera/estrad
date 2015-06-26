@@ -55,6 +55,7 @@
 		"uglify": {},
 		"paths": {
 			"require": "",
+			"dir": "", 
 			"listen": [
 				
 			],
