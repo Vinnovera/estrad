@@ -93,7 +93,7 @@ module.exports = function (gulp, o) {
 		} else {
 			
 			// Move and uglify javascipt files
-			gulp.src(paths.src)
+			gulp.src(sourcePath)
 				.pipe(gulp.dest(destPath))
 				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
