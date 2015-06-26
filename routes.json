@@ -2,5 +2,5 @@
 	"/that/very/cool/json": "/routes.json",
 	"/override/query": "/always/with?this=query",
 	"/different/domain": "https://www.example.com",
-	"/custom/:id/:value": "https://www.example.com/:value?id=:id"
+	"/wildcard/*": "https://www.example.com/"
 }
