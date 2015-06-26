@@ -1,5 +1,7 @@
 {
 	"/that/very/cool/json": "/routes.json",
 	"/override/query": "/always/with?this=query",
-	"/different/domain": "https://www.example.com"
+	"/different/domain": "https://www.example.com",
+	"/wildcard/extension/*.jpg": "https://www.example.com/",
+	"/wildcard/*": "https://www.example.com/"
 }

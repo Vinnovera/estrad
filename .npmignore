@@ -4,7 +4,7 @@ html/
 modules/
 pages/
 index.html
-.gitignore
 Gulpfile.js
 test/
 routes.json
+estrad.json
