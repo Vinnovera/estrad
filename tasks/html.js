@@ -12,11 +12,11 @@ module.exports = function (gulp, o) {
 	gulp.task('estrad-html_build', ['estrad-clean_build'], htmlTask);
 
 	function htmlTask(callback) {
-		var sourcePath, destPath, stream;
+		var srcPath, destPath, stream;
 
 		if(!o.html.build) return callback();
 
-		sourcePath = helper.prependPath(o.dir.src, paths.src);
+		srcPath = helper.prependPath(o.dir.src, paths.src);
 		destPath = helper.prependPath(o.dir.dest, paths.dest);
 
 		if(typeof srcPath === 'string') {
