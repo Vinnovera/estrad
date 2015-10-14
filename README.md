@@ -7,18 +7,18 @@ The goal is to have a build process fast enough that you do not have to wait whe
 
 ## Install
 
-Estrad requires node.js, install it if you have not already.
+Estrad requires node.js and [Gulp][0], install them if you have not already.
 
-Estrad is installed as a npm module. It's not currently published to npm, to install Estrad as a dev dependency run:
-
-```bash
-$ npm install git+https://github.com/Vinnovera/estrad.git#<latest commit SHA hash> --save-dev
-```
-
-[Gulp][0] needs to be installed globally:
+Install gulp:
 
 ```bash
 $ npm install gulp -g
+```
+
+To install Estrad in your project run:
+
+```bash
+$ npm install estrad --save-dev
 ```
 
 Include Estrad in your `Gulpfile.js` and pass it gulp:
