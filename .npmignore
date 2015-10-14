@@ -7,3 +7,6 @@ index.html
 Gulpfile.js
 test/
 routes.json
+lib/app.js
+estrad.json
+config.rb
