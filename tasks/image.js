@@ -25,14 +25,14 @@ module.exports = function (gulp, o) {
 	gulp.task('estrad-image_build', ['estrad-clean_build'], function() {
 		if(!o.images.build) return;
 
-		return imageMin();
+		return imageMin(true);
 	});
 
 	function imageTask(event, imageFile) {
 		switch(event) {
 			case 'add':
 			case 'change':
-				imageMin(imageFile);
+				imageMin(false, imageFile);
 
 				if(o.images.svgToPng) {
 					svgToPng(imageFile);
@@ -44,7 +44,7 @@ module.exports = function (gulp, o) {
 		}
 	}
 
-	function imageMin(imageFile) {
+	function imageMin(buildTask, imageFile) {
 		var 
 			files = imageFile || helper.prependPath(o.dir.src, paths.listen),
 			destPath;
