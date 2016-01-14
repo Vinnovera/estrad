@@ -45,9 +45,16 @@ module.exports = function (gulp, o) {
 	}
 
 	function imageMin(imageFile) {
-		var
-			destPath = helper.prependPath(o.dir.src, paths.dest),
-			files    = imageFile || helper.prependPath(o.dir.src, paths.listen);
+		var 
+			files = imageFile || helper.prependPath(o.dir.src, paths.listen),
+			destPath;
+
+		// Explicit true
+		if(buildTask !== true) {
+			destPath = helper.prependPath(o.dir.src, paths.dest);
+		} else {
+			destPath = helper.prependPath(o.dir.dest, paths.dest);
+		}
 
 		return gulp.src(files)
 			.pipe(imagemin({
