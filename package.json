@@ -1,7 +1,7 @@
 {
   "name": "estrad",
   "title": "Estrad",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A tool to create modular static frontend templates with a mocked backend",
   "main": "gulpfile-extend.js",
   "dependencies": {
