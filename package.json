@@ -30,7 +30,7 @@
     "imagemin-svgo": "^0.1.0",
     "jshint-stylish": "~0.1.5",
     "minimist": "^1.1.1",
-    "node-dir": "^0.1.6",
+    "node-dir": "~0.1.6",
     "rimraf": "^2.3.0",
     "through2": "^0.6.3",
     "tosource": "^0.1.3",
