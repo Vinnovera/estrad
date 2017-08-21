@@ -2,13 +2,14 @@ module.exports = function (gulp, o) {
 	"use strict";
 
 	var
-		concat    = require('gulp-concat'),
-		stylus    = require('gulp-stylus'),
-		gulpif    = require('gulp-if'),
-		ignore    = require('gulp-ignore'),
-		rename    = require('gulp-rename'),
-		minify    = require('gulp-minify-css'),
-		path      = require('path'),
+		concat     = require('gulp-concat'),
+		stylus     = require('gulp-stylus'),
+		gulpif     = require('gulp-if'),
+		ignore     = require('gulp-ignore'),
+		rename     = require('gulp-rename'),
+		minify     = require('gulp-minify-css'),
+		sourcemaps = require('gulp-sourcemaps'),
+		path       = require('path'),
 
 		spawn  = require('win-spawn'),
 		helper = require('../lib/helper'),
@@ -26,7 +27,11 @@ module.exports = function (gulp, o) {
 			callback();
 
 		} else if(o.css.preprocessor === "stylus") {
-			stylTask(true, callback);
+			if (o.css.sourcemaps) {
+				stylSrcMapTask(true, stylTask(true, callback));
+			} else {
+				stylTask(true, callback);
+			}
 		}
 	});
 
@@ -41,13 +46,18 @@ module.exports = function (gulp, o) {
 			helper.startWatcher(pathsListen, cssTask);
 
 		} else if(o.css.preprocessor === "sass") {
-			
+
 			if(compass) compass.kill();
 			compass = spawn('compass', ['watch'], {stdio: 'inherit'});
 			callback();
 
 		} else if(o.css.preprocessor === "stylus") {
-			stylTask(callback);
+			if (o.css.sourcemaps) {
+				stylSrcMapTask(stylTask(callback));
+				helper.startWatcher(pathsListen, stylSrcMapTask);
+			} else {
+				stylTask(callback);
+			}
 			helper.startWatcher(pathsListen, stylTask);
 		}
 	});
@@ -87,7 +97,7 @@ module.exports = function (gulp, o) {
 
 			/**
 			 * === Watch task ends here === *
-			 * 
+			 *
 			 * Do not compress CSS if buildTask or o.css.minify is false
 			 */
 			.pipe(gulpif(buildTask !== true || !o.css.minify, ignore.exclude(true)))
@@ -127,7 +137,7 @@ module.exports = function (gulp, o) {
 
 			/**
 			 * === Watch task ends here === *
-			 * 
+			 *
 			 * Do not compress CSS if buildTask or o.css.minify is false
 			 */
 			.pipe(gulpif(buildTask !== true || !o.css.minify, ignore.exclude(true)))
@@ -135,6 +145,34 @@ module.exports = function (gulp, o) {
 			.pipe(rename(function(path) {
 				path.extname = '.min' + path.extname;
 			}))
+			.pipe(gulp.dest(destPath));
+
+		stream.on('end', callback);
+		stream.on('error', callback);
+	}
+
+	/* Stylus sourcemap */
+	function stylSrcMapTask(buildTask, callback) {
+		var
+			sourcePath = helper.prependPath(o.dir.src, paths.src),
+			destPath, stream;
+
+		if(typeof buildTask === 'function') callback = buildTask;
+		if(!callback || typeof callback !== 'function') callback = function() {};
+
+		// Explicit true
+		if(buildTask !== true) {
+			destPath = helper.prependPath(o.dir.src, paths.dest);
+		} else {
+			destPath = helper.prependPath(o.dir.dest, paths.dest);
+		}
+
+		if(path.extname(destPath)) destPath = path.dirname(destPath);
+
+		stream = gulp.src(sourcePath)
+			.pipe(sourcemaps.init())
+			.pipe(stylus(o.css.settings).on('error', stylError))
+			.pipe(sourcemaps.write())
 			.pipe(gulp.dest(destPath));
 
 		stream.on('end', callback);

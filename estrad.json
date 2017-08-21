@@ -4,16 +4,17 @@
 		"partials": "/",
 		"build": "/"
 	},
-	
+
 	"css": {
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
+		"sourcemaps":   false,
 		"settings":     {},
 		"minify":       false,
 		"paths": {
 			"listen": [
-				
+
 			],
 			"src": [
 				"!./node_modules/"
@@ -55,9 +56,9 @@
 		"uglify": {},
 		"paths": {
 			"require": "",
-			"dir": "", 
+			"dir": "",
 			"listen": [
-				
+
 			],
 			"src":  [
 				"!./node_modules"
