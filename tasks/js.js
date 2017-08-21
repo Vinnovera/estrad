@@ -19,6 +19,7 @@ module.exports = function (gulp, o) {
 		toSource      = require('tosource'),
 		through2      = require('through2'),
 		concat        = require('gulp-concat'),
+		sourcemaps    = require('gulp-sourcemaps'),
 		paths         = o.js.paths,
 		requireRex    = /require.config\(([\s\S]+?)\)/i,
 		jstimeout;
@@ -95,11 +96,13 @@ module.exports = function (gulp, o) {
 			// Move and uglify javascipt files
 			gulp.src(sourcePath)
 				.pipe(gulp.dest(destPath))
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.init()))
 				.pipe(gulpif(o.js.concat, concat(path.basename(paths.dest))))
 				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
 					path.extname = '.min.js';
 				}))
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.write('.')))
 				.pipe(gulp.dest(destPath))
 				.on('end', function() {
 					callback();
@@ -137,7 +140,7 @@ module.exports = function (gulp, o) {
 		callback = callback || function() {};
 
 		if(!paths.require || !paths.dir) return callback();
-		
+
 		dirPath = helper.prependPath(o.dir.src, paths.dir);
 
 		dir.files(helper.cwd(dirPath), function(err, files) {

@@ -54,6 +54,7 @@
 		"watch": false,
 		"build": false,
 		"uglify": {},
+		"sourcemaps": false,
 		"paths": {
 			"require": "",
 			"dir": "",
