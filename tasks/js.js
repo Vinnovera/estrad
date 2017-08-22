@@ -100,6 +100,7 @@ module.exports = function (gulp, o) {
 				.pipe(gulp.dest(destPath))
 				.pipe(gulpif(o.js.sourcemaps, sourcemaps.init()))
 				.pipe(gulpif(o.js.concat, concat(path.basename(paths.dest))))
+				.pipe(gulpif(o.js.babel, babel()))
 				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
 					path.extname = '.min.js';
