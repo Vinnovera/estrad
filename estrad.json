@@ -25,6 +25,7 @@
 
 	"html": {
 		"build": false,
+		"engine": "dot",
 		"prettify": {
 			"indent_size": 1,
 			"indent_char": "\t",

@@ -28,7 +28,8 @@ module.exports = function (gulp, o) {
 		// Build html files
 		stream = gulp.src(srcPath)
 			.pipe(partials({
-				folder: o.dir.partials
+				folder: o.dir.partials,
+				engine: o.html.engine
 			}))
 			.pipe(rename(function(path) {
 				var
