@@ -29,7 +29,8 @@ module.exports = function (gulp, o) {
 		stream = gulp.src(srcPath)
 			.pipe(partials({
 				folder: o.dir.partials,
-				engine: o.html.engine
+				engine: o.html.engine,
+				templateSettings: o.html.templateSettings
 			}))
 			.pipe(rename(function(path) {
 				var
