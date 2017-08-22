@@ -20,6 +20,7 @@ module.exports = function (gulp, o) {
 		through2      = require('through2'),
 		concat        = require('gulp-concat'),
 		sourcemaps    = require('gulp-sourcemaps'),
+		babel         = require("gulp-babel"),
 		paths         = o.js.paths,
 		requireRex    = /require.config\(([\s\S]+?)\)/i,
 		jstimeout;
@@ -32,6 +33,7 @@ module.exports = function (gulp, o) {
 
 		helper.startWatcher(listenPath, jsTask);
 
+		jsTask();
 		requireConfigPaths(callback);
 	});
 
@@ -115,16 +117,30 @@ module.exports = function (gulp, o) {
 			case 'add':
 				clearTimeout(jstimeout);
 				jstimeout = setTimeout(function() {
-					jsLint(path);
+					if (o.js.lint) jsLint(path);
 					requireConfigPaths();
 				}, 10);
 			break;
 			case 'change':
-				jsLint(path);
+				if (o.js.lint) jsLint(path);
 			break;
 			case 'unlink':
 				requireConfigPaths();
 			break;
+		}
+
+		if (o.js.babel) {
+			var destPath = helper.prependPath(o.dir.src, paths.dest),
+				sourcePath = helper.prependPath(o.dir.src, paths.src);
+
+			if(path.extname(destPath)) destPath = path.dirname(destPath);
+
+			sourcePath.push('!' + destPath + '/' + path.basename(paths.dest));
+
+			gulp.src(sourcePath)
+				.pipe(concat(path.basename(paths.dest)))
+				.pipe(babel())
+				.pipe(gulp.dest(destPath));
 		}
 	}
 

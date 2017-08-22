@@ -55,6 +55,8 @@
 		"build": false,
 		"uglify": {},
 		"sourcemaps": false,
+		"lint": false,
+		"babel": false,
 		"paths": {
 			"require": "",
 			"dir": "",
