@@ -61,10 +61,12 @@
 			"require": "",
 			"dir": "",
 			"listen": [
+
+			],
+			"babel": {
 				"paths": [],
 				"dest": ""
-			],
-			"babel": {},
+			},
 			"src":  [
 				"!./node_modules"
 			],
