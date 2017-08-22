@@ -14,7 +14,7 @@
     "glob-chokidar": "0.0.3",
     "gulp-babel": "^7.0.0",
     "gulp-concat": "~2.6.1",
-    "gulp-estrad-template": "git+https://github.com/JonasStattin/gulp-estrad-template.git#ddaf5e5cb17a837a5ea85ff55ad826bdf9e225cb",
+    "gulp-estrad-template": "git+https://github.com/JonasStattin/gulp-estrad-template.git#b9a1ce5c5ea27049ff12ee43ff3112c5d5cca72a",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-imagemin": "^3.1.1",
