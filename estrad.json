@@ -61,8 +61,10 @@
 			"require": "",
 			"dir": "",
 			"listen": [
-
+				"paths": [],
+				"dest": ""
 			],
+			"babel": {},
 			"src":  [
 				"!./node_modules"
 			],

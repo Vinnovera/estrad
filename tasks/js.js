@@ -31,13 +31,6 @@ module.exports = function (gulp, o) {
 
 		if(!o.js.watch) return callback();
 
-		if (o.js.babel) {
-			var destPath = helper.prependPath(o.dir.src, paths.dest);
-			if(path.extname(destPath)) destPath = path.dirname(destPath);
-
-			listenPath.push('!' + destPath + '/' + path.basename(paths.dest));
-		}
-
 		helper.startWatcher(listenPath, jsTask);
 
 		jsTask();
@@ -137,12 +130,8 @@ module.exports = function (gulp, o) {
 		}
 
 		if (o.js.babel) {
-			var destPath = helper.prependPath(o.dir.src, paths.dest),
-				sourcePath = helper.prependPath(o.dir.src, paths.src);
-
-			if(path.extname(destPath)) destPath = path.dirname(destPath);
-
-			sourcePath.push('!' + destPath + '/' + path.basename(paths.dest));
+			var destPath = helper.prependPath(o.dir.src, paths.babel.dest),
+				sourcePath = helper.prependPath(o.dir.src, paths.babel.paths);
 
 			gulp.src(sourcePath)
 				.pipe(concat(path.basename(paths.dest)))
