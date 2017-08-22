@@ -134,8 +134,10 @@ module.exports = function (gulp, o) {
 				sourcePath = helper.prependPath(o.dir.src, paths.babel.paths);
 
 			gulp.src(sourcePath)
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.init()))
 				.pipe(concat(path.basename(paths.dest)))
 				.pipe(babel())
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.write('.')))
 				.pipe(gulp.dest(destPath));
 		}
 	}
