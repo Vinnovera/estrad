@@ -31,6 +31,13 @@ module.exports = function (gulp, o) {
 
 		if(!o.js.watch) return callback();
 
+		if (o.js.babel) {
+			var destPath = helper.prependPath(o.dir.src, paths.dest);
+			if(path.extname(destPath)) destPath = path.dirname(destPath);
+
+			listenPath.push('!' + destPath + '/' + path.basename(paths.dest));
+		}
+
 		helper.startWatcher(listenPath, jsTask);
 
 		jsTask();
@@ -112,17 +119,17 @@ module.exports = function (gulp, o) {
 		}
 	});
 
-	function jsTask(event, path) {
+	function jsTask(event, pathto) {
 		switch(event) {
 			case 'add':
 				clearTimeout(jstimeout);
 				jstimeout = setTimeout(function() {
-					if (o.js.lint) jsLint(path);
+					if (o.js.lint) jsLint(pathto);
 					requireConfigPaths();
 				}, 10);
 			break;
 			case 'change':
-				if (o.js.lint) jsLint(path);
+				if (o.js.lint) jsLint(pathto);
 			break;
 			case 'unlink':
 				requireConfigPaths();
