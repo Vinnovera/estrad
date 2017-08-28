@@ -4,16 +4,17 @@
 		"partials": "/",
 		"build": "/"
 	},
-	
+
 	"css": {
 		"watch":        false,
 		"build":        false,
 		"preprocessor": false,
+		"sourcemaps":   false,
 		"settings":     {},
 		"minify":       false,
 		"paths": {
 			"listen": [
-				
+
 			],
 			"src": [
 				"!./node_modules/"
@@ -24,6 +25,7 @@
 
 	"html": {
 		"build": false,
+		"engine": "dot",
 		"prettify": {
 			"indent_size": 1,
 			"indent_char": "\t",
@@ -53,12 +55,19 @@
 		"watch": false,
 		"build": false,
 		"uglify": {},
+		"sourcemaps": false,
+		"lint": false,
+		"babel": false,
 		"paths": {
 			"require": "",
-			"dir": "", 
+			"dir": "",
 			"listen": [
-				
+
 			],
+			"babel": {
+				"paths": [],
+				"dest": ""
+			},
 			"src":  [
 				"!./node_modules"
 			],

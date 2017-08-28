@@ -19,6 +19,8 @@ module.exports = function (gulp, o) {
 		toSource      = require('tosource'),
 		through2      = require('through2'),
 		concat        = require('gulp-concat'),
+		sourcemaps    = require('gulp-sourcemaps'),
+		babel         = require("gulp-babel"),
 		paths         = o.js.paths,
 		requireRex    = /require.config\(([\s\S]+?)\)/i,
 		jstimeout;
@@ -31,6 +33,7 @@ module.exports = function (gulp, o) {
 
 		helper.startWatcher(listenPath, jsTask);
 
+		jsTask();
 		requireConfigPaths(callback);
 	});
 
@@ -95,11 +98,14 @@ module.exports = function (gulp, o) {
 			// Move and uglify javascipt files
 			gulp.src(sourcePath)
 				.pipe(gulp.dest(destPath))
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.init()))
 				.pipe(gulpif(o.js.concat, concat(path.basename(paths.dest))))
+				.pipe(gulpif(o.js.babel, babel()))
 				.pipe(gulpif(o.js.uglify, uglify(o.js.uglify), ignore.exclude(true)))
 				.pipe(rename(function(path) {
 					path.extname = '.min.js';
 				}))
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.write('.')))
 				.pipe(gulp.dest(destPath))
 				.on('end', function() {
 					callback();
@@ -107,21 +113,33 @@ module.exports = function (gulp, o) {
 		}
 	});
 
-	function jsTask(event, path) {
+	function jsTask(event, pathto) {
 		switch(event) {
 			case 'add':
 				clearTimeout(jstimeout);
 				jstimeout = setTimeout(function() {
-					jsLint(path);
+					if (o.js.lint) jsLint(pathto);
 					requireConfigPaths();
 				}, 10);
 			break;
 			case 'change':
-				jsLint(path);
+				if (o.js.lint) jsLint(pathto);
 			break;
 			case 'unlink':
 				requireConfigPaths();
 			break;
+		}
+
+		if (o.js.babel) {
+			var destPath = helper.prependPath(o.dir.src, paths.babel.dest),
+				sourcePath = helper.prependPath(o.dir.src, paths.babel.paths);
+
+			gulp.src(sourcePath)
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.init()))
+				.pipe(concat(path.basename(paths.dest)))
+				.pipe(babel())
+				.pipe(gulpif(o.js.sourcemaps, sourcemaps.write('.')))
+				.pipe(gulp.dest(destPath));
 		}
 	}
 
@@ -137,7 +155,7 @@ module.exports = function (gulp, o) {
 		callback = callback || function() {};
 
 		if(!paths.require || !paths.dir) return callback();
-		
+
 		dirPath = helper.prependPath(o.dir.src, paths.dir);
 
 		dir.files(helper.cwd(dirPath), function(err, files) {

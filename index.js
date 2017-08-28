@@ -50,8 +50,9 @@
 	 * HTML file handler
 	 */
 	function handler(req, res) {
-		var 
-			pathname = url.parse(req.url).pathname;
+		var
+			pathname = url.parse(req.url).pathname,
+			engine = argv.engine || 'dot';
 
 		if(pathname === "/") pathname = "/index.html";
 
@@ -66,7 +67,7 @@
 
 			console.log("[" + chalk.green("estrad-server") + "] Request: " + chalk.magenta(pathname));
 
-			partials(pathname, { folder: argv.modules }, function(err, content) {
+			partials(pathname, { folder: argv.modules, engine: engine }, function(err, content) {
 				if(err) {
 					res.writeHead(500, "server error");
 					res.end();
@@ -99,7 +100,7 @@
 
 				if(err) {
 					res.end(data);
-					
+
 				} else {
 					res.end(paths + data);
 				}
